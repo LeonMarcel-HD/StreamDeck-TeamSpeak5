@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>de.leonmarcel.pttaction</title>
+  <link rel="stylesheet" href="../libs/css/sdpi.css" />
+</head>
+
+<body>
+  <div class="sdpi-wrapper">
+    <div id="sdpi-layout1" style="display: none;">
+      <div class="sdpi-item">
+        <h3 class="sdpi-item" style="text-align: center;" data-localize
+          title="Could not connect to TeamSpeak Remote App"><strong>Could not connect to TeamSpeak Remote App</strong>
+      </div>
+      <div>
+        </p>
+        </p>
+      </div>
+      <div class="sdpi-item">
+        <div class="sdpi-item-label" data-localize title="Setup">Setup</div>
+        <button class="sdpi-item-value" value="Open Setup Guide" data-localize id="open-setup">Open Setup Guide
+        </button>
+      </div>
+    </div>
+    <div id="sdpi-layout2">
+      <div type="radio" class="sdpi-item" id="adjust_radio">
+        <div class="sdpi-item-label" data-localize title="Operation Mode">Operation Mode</div>
+        <div class="sdpi-item-value">
+          <div class="sdpi-item-child">
+            <input id="rdio1" type="radio" name="rdio" data-localize>
+            <label for="rdio1" class="sdpi-item-label" data-localize title="Push To Activate"><span></span>
+              Push To Activate</label>
+          </div>
+          <div class="sdpi-item-child">
+            <input id="rdio2" type="radio" name="rdio" data-localize>
+            <label for="rdio2" class="sdpi-item-label" data-localize title="Toggle To Activate"><span></span>
+              Toggle To Activate</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script src="../libs/js/constants.js"></script>
+  <script src="../libs/js/events.js"></script>
+  <script src="../libs/js/api.js"></script>
+  <script src="../libs/js/property-inspector.js"></script>
+  <script src="../libs/js/dynamic-styles.js"></script>
+  <script src="pushtotalk_pi.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+= Stream Deck Plugin for TeamSpeak 5
+
+image:https://img.shields.io/github/v/release/leonmarcel-hd/StreamDeck-TeamSpeak5?color=blue&label=Latest Version[link="https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/releases/latest"] 
+
+image::https://user-images.githubusercontent.com/83507548/242984540-5c6607ab-86c6-4f3c-8f85-b9343ef1ce7e.png[Header Image]
+
+== Setup
+
+=== Connecting TeamSpeak
+    
+Launch TeamSpeak and head over to the **Settings** ->
+**Remote Apps**. Make sure that the Port is set to
+**5899**
+
+Now you should see a request sent by the Plugin, accept it.
+
+=== Setting up Keybindings
+
+After the connection is established, you need to bind each Stream Deck
+Button to a TeamSpeak Keybinding.
+
+(Similar to what you do with a regular Key. The Plugin just sends
+virtual Keys)
+
+So set up your Buttons on the Stream Deck, select the corresponding
+function you want the Button mapped to.
+
+For example, you place the Mute Action on your Stream Deck, then you need
+to select **Choose** on the Mute Binding in TeamSpeak and
+press the Button on the Stream Deck. You need to repeat this for every
+other Key, as TeamSpeak currently does not offer a way to set up the
+Bindings automatically!
+
+After setting all Keybindings, you are read to talk (or not if you are
+muted)!
+
+=== Configuration of Whisperlists
+
+Create a Whisperlist in TeamSpeak
+
+Place your Button on the Stream Deck and input the name of the Whisperlist
+(This name does not need to match, but could interfere with other
+Whisperlist Buttons if two buttons are named the same)
+
+Click on **Choose** to set the Keybinding, then press the
+Button on the Stream Deck and select the Whisperlist on the left side
+beside the Keybinding.
+    
+== Changelog (v1.0.0 - latest Version)
+
+Initial Release :partying_face:
+
+You can find the complete changelog in the https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/releases[**Releases**] section.
+
+== Features
+
+image::https://user-images.githubusercontent.com/83507548/243126376-2ca6abe3-8b3d-4082-8fa2-59f624fe8eb6.png[Features]
+
+_All Push to Activate Buttons can be toggled to act as Toggle to Activate_
+
+== Download & Installation
+
+**You should download it through the Elgato Store!**
+
+== Bug Reports
+
+If you have found a bug or encountered an issue while using the Plugin 5, please report it on the https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/issues[**GitHub Issues**]  page. Please follow these guidelines when submitting an issue:
+
+- Clearly describe the problem, including steps to reproduce the issue.
+- Specify the version of the Plugin, the TeamSpeak Client and the Stream Deck Software.
+- Attach any relevant screenshots that may help troubleshooting the problem.
+
+== Feature Requests
+
+If you have any feature requests or suggestions for improving the Plugin, feel free to share them on the https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/discussions/categories/feature-requests-suggestions[**GitHub Discussions**] page. I appreciate your feedback and will consider it for future updates.
+
+== Credits
+
+I would like to thank https://github.com/Gamer92000[**Gamer92000**] for their contribution to this project.
+
+Thank you for using this Plugin <3!

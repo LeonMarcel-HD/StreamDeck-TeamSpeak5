@@ -1,0 +1,169 @@
+{
+  "SDKVersion": 2,
+  "Author": "LeonMarcel",
+  "CodePath": "app.html",
+  "Description": "Control TeamSpeak 5 trough Remote Apps",
+  "Name": "TeamSpeak 5",
+  "Icon": "assets/icon_plugin",
+  "URL": "https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5",
+  "Version": "1.0.0",
+  "Software": {
+    "MinimumVersion": "5.0"
+  },
+  "OS": [
+    {
+      "Platform": "mac",
+      "MinimumVersion": "10.11"
+    },
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Category": "TeamSpeak 5",
+  "CategoryIcon": "assets/icon_category",
+  "Actions": [
+    {
+      "Name": "Mute",
+      "Tooltip": "Toggle your Audio Input",
+      "UUID": "de.leonmarcel.teamspeak5.muteaction",
+      "PropertyInspectorPath": "actions/connection.html",
+      "Icon": "assets/mute/icon_mic",
+      "DisableAutomaticStates": true,
+      "States": [
+        {
+          "Image": "assets/mute/mic_on"
+        },
+        {
+          "Image": "assets/mute/mic_off"
+        }
+      ]
+    },
+    {
+      "Name": "Sound Mute",
+      "Tooltip": "Toggle your Audio Output",
+      "UUID": "de.leonmarcel.teamspeak5.soundmuteaction",
+      "PropertyInspectorPath": "actions/connection.html",
+      "Icon": "assets/soundmute/icon_sound",
+      "DisableAutomaticStates": true,
+      "States": [
+        {
+          "Name": "On",
+          "Image": "assets/soundmute/sound_on"
+        },
+        {
+          "Name": "Off",
+          "Image": "assets/soundmute/sound_off"
+        }
+      ]
+    },
+    {
+      "Name": "AFK",
+      "Tooltip": "Toggle your AFK Status",
+      "UUID": "de.leonmarcel.teamspeak5.afkaction",
+      "PropertyInspectorPath": "actions/connection.html",
+      "Icon": "assets/afk/icon_afk",
+      "DisableAutomaticStates": true,
+      "States": [
+        {
+          "Name": "On",
+          "Image": "assets/afk/afk_bak"
+        },
+        {
+          "Name": "Off",
+          "Image": "assets/afk/afk_afk"
+        }
+      ]
+    },
+    {
+      "Name": "Push To Talk",
+      "Tooltip": "Push to activate your Microphone",
+      "UUID": "de.leonmarcel.teamspeak5.pttaction",
+      "PropertyInspectorPath": "actions/pushtotalk_pi.html",
+      "Icon": "assets/ptt/icon_ptt",
+      "DisableAutomaticStates": true,
+      "States": [
+        {
+          "Name": "On",
+          "Image": "assets/ptt/ptt_on"
+        },
+        {
+          "Name": "Off",
+          "Image": "assets/ptt/ptt_off"
+        }
+      ]
+    },
+    {
+      "Name": "Push To Mute",
+      "Tooltip": "Push to deactivate your Microphone",
+      "UUID": "de.leonmarcel.teamspeak5.ptmaction",
+      "PropertyInspectorPath": "actions/pushtotalk_pi.html",
+      "Icon": "assets/ptm/icon_ptm",
+      "DisableAutomaticStates": true,
+      "States": [
+        {
+          "Name": "On",
+          "Image": "assets/ptm/ptm_on"
+        },
+        {
+          "Name": "Off",
+          "Image": "assets/ptm/ptm_off"
+        }
+      ]
+    },
+    {
+      "Name": "Whisper To List",
+      "Tooltip": "Push to whisper to a List",
+      "UUID": "de.leonmarcel.teamspeak5.lwhisperaction",
+      "PropertyInspectorPath": "actions/listwhisper_pi.html",
+      "Icon": "assets/lwhisper/icon_lwhisper",
+      "DisableAutomaticStates": true,
+      "States": [
+        {
+          "Name": "On",
+          "Image": "assets/lwhisper/lwhisper_off"
+        },
+        {
+          "Name": "Off",
+          "Image": "assets/lwhisper/lwhisper_on"
+        }
+      ]
+    },
+    {
+      "Name": "Reply to Whisper",
+      "Tooltip": "Push to whisper a reply",
+      "UUID": "de.leonmarcel.teamspeak5.rwhisperaction",
+      "PropertyInspectorPath": "actions/pushtotalk_pi.html",
+      "Icon": "assets/rwhisper/icon_rwhisper",
+      "DisableAutomaticStates": true,
+      "States": [
+        {
+          "Name": "On",
+          "Image": "assets/rwhisper/rwhisper_off"
+        },
+        {
+          "Name": "Off",
+          "Image": "assets/rwhisper/rwhisper_on"
+        }
+      ]
+    },
+    {
+      "Name": "Quick Whisper to selected",
+      "Tooltip": "Push to whisper to selected Clients",
+      "UUID": "de.leonmarcel.teamspeak5.qwhisperaction",
+      "PropertyInspectorPath": "actions/pushtotalk_pi.html",
+      "Icon": "assets/qwhisper/icon_qwhisper",
+      "DisableAutomaticStates": true,
+      "States": [
+        {
+          "Name": "On",
+          "Image": "assets/qwhisper/qwhisper_off"
+        },
+        {
+          "Name": "Off",
+          "Image": "assets/qwhisper/qwhisper_on"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "Description": "Control TeamSpeak 5 trough Remote Apps", 
+  "Name": "TeamSpeak 5", 
+  "Category": "TeamSpeak 5", 
+  "de.leonmarcel.teamspeak5.muteaction": {
+    "Name": "Microphone Mute", 
+    "Tooltip": "Toggle your Microphone Mute"
+  },
+  "de.leonmarcel.teamspeak5.soundmuteaction": {
+    "Name": "Output Mute", 
+    "Tooltip": "Toggle your Sound Mute"
+  },
+  "de.leonmarcel.teamspeak5.afkaction": {
+    "Name": "AFK Status", 
+    "Tooltip": "Toggle your AFK Status"
+  },
+  "de.leonmarcel.teamspeak5.qwhisperaction": {
+    "Name": "Quick Whisper to selected", 
+    "Tooltip": "Whisper to selected Clients in Server Tree"
+  },
+  "de.leonmarcel.teamspeak5.rwhisperaction": {
+    "Name": "Reply to Whisper", 
+    "Tooltip": "Reply to last Whisper"
+  },
+  "de.leonmarcel.teamspeak5.lwhisperaction": {
+    "Name": "Whisper to List", 
+    "Tooltip": "Whisper to a Whisperlist"
+  },
+  "de.leonmarcel.teamspeak5.ptmaction": {
+    "Name": "Push to Mute", 
+    "Tooltip": "Activate to Mute"
+  },
+  "de.leonmarcel.teamspeak5.pttaction": {
+    "Name": "Push to Talk", 
+    "Tooltip": "Activate to Talk"
+  },
+  "Localization": {
+    "Operation Mode": "Operation Mode",
+    "Push To Activate": "Push to Activate",
+    "Toggle To Activate": "Toggle to Activate",
+    "Whisperlist": "Whisperlist",
+    "Enter Whisperlist Name": "Enter Whisperlist Name",
+    "Could not connect to TeamSpeak Remote App": "Could not connect to TeamSpeak Remote App",
+    "Setup": "Setup",
+    "Open Setup Guide": "Open Setup Guide"
+  }
+}
