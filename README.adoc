@@ -60,11 +60,11 @@ _All Push to Activate Buttons can be toggled to act as Toggle to Activate_
 
 == Download & Installation
 
-**You should download it through the Elgato Store!**
+**You should download it from the https://apps.elgato.com/plugins/de.leonmarcel.teamspeak5[Elgato Store]!**
 
 == Bug Reports
 
-If you have found a bug or encountered an issue while using the Plugin 5, please report it on the https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/issues[**GitHub Issues**]  page. Please follow these guidelines when submitting an issue:
+If you have found a bug or encountered an issue while using the Plugin, please report it on the https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/issues[**GitHub Issues**] page. Please follow these guidelines when submitting an issue:
 
 - Clearly describe the problem, including steps to reproduce the issue.
 - Specify the version of the Plugin, the TeamSpeak Client and the Stream Deck Software.
