@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help me improve
-title: "[BUG] | "
+title: "[BUG] | ISSUE TITLE"
 labels: ''
 assignees: ''
 
@@ -26,6 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **Additional context**
  - Operating System: 
  - Stream Deck Version: 
+ - Stream Deck Hardware: Stream Deck MK1 / 2 / +, Mini, XL, Mobile, Pedal
  - Plugin Version: 
  - TeamSpeak Version: 
 
