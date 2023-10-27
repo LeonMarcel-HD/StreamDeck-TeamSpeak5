@@ -60,7 +60,7 @@ _All Push to Activate Buttons can be toggled to act as Toggle to Activate_
 
 == Download & Installation
 
-**You should download it from the https://apps.elgato.com/plugins/de.leonmarcel.teamspeak5[Elgato Store]!**
+**You should download it from the https://marketplace.elgato.com/product/teamspeak-5-871cb93b-a819-48e5-bb06-1aef5e75687f[Elgato Marketplace] or the https://apps.elgato.com/plugins/de.leonmarcel.teamspeak5[Elgato Store]!**
 
 == Bug Reports
 
