@@ -2,29 +2,38 @@
 /// <reference path="../libs/js/utils.js" />
 /// <reference path="../libs/js/stream-deck.js" />
 
-let actionUUID = "";
-let actionContext;
-let TeamSpeakWebSocketConnectionStatus = false;
+let teamspeakWebSocketConnectionStatus = false;
+let currentLanguage;
 
 $PI.onConnected((jsn) => {
   $PI.getGlobalSettings();
+  console.log("Current ActionInfo Settings: ", jsn);
+  currentLanguage = jsn.appInfo.application.language;
 });
 
 $PI.onDidReceiveGlobalSettings(({ payload }) => {
-  TeamSpeakWebSocketConnectionStatus = payload.settings.connectionStatus;
+  teamspeakWebSocketConnectionStatus = payload.settings.connectionStatus;
 
   var layout1 = document.getElementById("sdpi-layout1");
   var layout2 = document.getElementById("sdpi-layout2");
 
-  if (!TeamSpeakWebSocketConnectionStatus) {
+  if (!teamspeakWebSocketConnectionStatus) {
     layout1.style.display = "block";
     layout2.style.display = "none";
   } else {
-    layout2.style.display = "block";
     layout1.style.display = "none";
+    layout2.style.display = "block";
   }
 });
 
-document.querySelector('#open-setup').addEventListener('click', () => {
-    window.open('setup.html');
-  });
+document.getElementById("open-setup").addEventListener("click", () => {
+  switch (currentLanguage) {
+    case "de":
+      window.open("setupde.html");
+      break;
+    case "en":
+    default:
+      window.open("setupen.html");
+      break;
+  }
+});

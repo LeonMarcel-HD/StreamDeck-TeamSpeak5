@@ -2,81 +2,75 @@
 /// <reference path="../libs/js/utils.js" />
 /// <reference path="../libs/js/stream-deck.js" />
 
-let actionUUID = "";
-let actionContext;
-let TeamSpeakWebSocketConnectionStatus = false;
-let PushToTalk = true;
+let teamspeakWebSocketConnectionStatus = false;
+let currentLanguage;
+let settings;
 
 $PI.onConnected((jsn) => {
   $PI.getGlobalSettings();
   settings = jsn.actionInfo.payload.settings;
-  console.log(jsn.actionInfo.payload.settings);
-
-  PushToTalk = jsn.actionInfo.payload.settings.pushtotalk;
-  if (!jsn.actionInfo.payload.settings.pushtotalk) {
-    const input = "on";
-    settings.pushtotalk = input;
-    $PI.setSettings(settings);
-  }
-
-  actionContext = jsn.actionInfo.context;
-  Object.entries(jsn.actionInfo.payload.settings).forEach(([key, value]) => {
-    const el = document.getElementById(key);
-    if (el) {
-      el.value = value;
-    }
-  });
+  console.log("Current PTT Settings: ", settings);
+  console.log("Current ActionInfo Settings: ", jsn.actionInfo);
+  currentLanguage = jsn.appInfo.application.language;
 });
 
-$PI.onDidReceiveGlobalSettings(({payload}) => {
-  console.log('onDidReceiveGlobalSettings', payload);
-  TeamSpeakWebSocketConnectionStatus = payload.settings.connectionStatus;
-
+$PI.onDidReceiveGlobalSettings(({ payload }) => {
+  console.log("onDidReceiveGlobalSettings", payload);
+  teamspeakWebSocketConnectionStatus = payload.settings.connectionStatus;
   var layout1 = document.getElementById("sdpi-layout1");
   var layout2 = document.getElementById("sdpi-layout2");
-  
-  if (!TeamSpeakWebSocketConnectionStatus) {
+
+  if (!teamspeakWebSocketConnectionStatus) {
+    // If TS is NOT connected show Setup process
     layout1.style.display = "block";
     layout2.style.display = "none";
   } else {
-    layout2.style.display = "block";
+    // If TS is connected show settings
     layout1.style.display = "none";
-    if (PushToTalk == "on") {
-      const rdio1 = document.querySelector("#rdio1");
-      rdio1.checked = true;
-    } else {
-      const rdio2 = document.querySelector("#rdio2");
-      rdio2.checked = true;
+    layout2.style.display = "block";
+    // Restoring previously setted settings
+    document.getElementById("whisperlist").value = settings.input ?? "";
+    switch (settings.ptt) {
+      case 1:
+        document.getElementById("rdio1").checked = true;
+        break;
+      case 2:
+        document.getElementById("rdio2").checked = true;
+        break;
+      default:
+        console.warn("No settings found, setting to default");
+        document.getElementById("rdio1").checked = true;
+        $PI.setSettings({ ...settings, ptt: 1 });
     }
   }
-})
-
-const radio1 = document.getElementById("rdio1");
-const radio2 = document.getElementById("rdio2");
-const txtinput = document.getElementById("whisperlist");
-let settings;
+});
 
 // Whisper list
-txtinput.addEventListener("input", function () {
-  const input = event.target.value;
-  settings.whisperlist = input;
+document.getElementById("whisperlist").addEventListener("input", (event) => {
+  settings = { ...settings, input: event.target.value };
   $PI.setSettings(settings);
 });
 
 // Push To Talk
-radio1.addEventListener("click", function () {
-  const input = "on";
-  settings.pushtotalk = input;
+document.getElementById("rdio1").addEventListener("click", () => {
+  settings = { ...settings, ptt: 1 };
   $PI.setSettings(settings);
 });
 
 // Toggle To Talk
-radio2.addEventListener("click", function () {
-  const input = "off";
-  settings.pushtotalk = input;
+document.getElementById("rdio2").addEventListener("click", () => {
+  settings = { ...settings, ptt: 2 };
   $PI.setSettings(settings);
 });
 
-document.querySelector('#open-setup').addEventListener('click', () => {
-  window.open('setup.html');
+document.getElementById("open-setup").addEventListener("click", () => {
+  switch (currentLanguage) {
+    case "de":
+      window.open("setupde.html");
+      break;
+    case "en":
+    default:
+      window.open("setupen.html");
+      break;
+  }
 });
