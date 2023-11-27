@@ -166,10 +166,10 @@
       ]
     },
     {
-      "Name": "Dummy Button",
-      "Tooltip": "Dummy Button",
-      "UUID": "de.leonmarcel.teamspeak5.dummyaction",
-      "PropertyInspectorPath": "actions/connection.html",
+      "Name": "Overlay",
+      "Tooltip": "See currently Talking Users",
+      "UUID": "de.leonmarcel.teamspeak5.overlay",
+      "PropertyInspectorPath": "actions/overlay_pi.html",
       "Icon": "assets/qwhisper/icon_qwhisper",
       "States": [
         {

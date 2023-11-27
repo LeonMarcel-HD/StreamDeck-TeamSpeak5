@@ -40,7 +40,7 @@
     "Toggle To Activate": "Toggle to Activate",
     "Whisperlist": "Whisperlist",
     "Enter Whisperlist Name": "Enter Whisperlist Name",
-    "Could not connect to TeamSpeak Remote App": "Could not connect to TeamSpeak Remote App",
+    "couldnotopenremoteapps": "Could not connect to TeamSpeak Remote App",
     "Setup": "Setup",
     "Open Setup Guide": "Open Setup Guide"
   }

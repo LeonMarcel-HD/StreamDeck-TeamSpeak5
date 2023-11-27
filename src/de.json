@@ -1,47 +1,54 @@
 {
-  "Description": "Steuere TeamSpeak 5 durch Remote Apps", 
-  "Name": "TeamSpeak 5", 
-  "Category": "TeamSpeak 5", 
+  "Description": "Steuere TeamSpeak 5 durch Remote Apps",
+  "Name": "TeamSpeak 5",
+  "Category": "TeamSpeak 5",
   "de.leonmarcel.teamspeak5.muteaction": {
-    "Name": "Mikrofon stummschalten", 
+    "Name": "Mikrofon stummschalten",
     "Tooltip": "Wechseln der Mikrofon-Stummschaltung"
   },
   "de.leonmarcel.teamspeak5.soundmuteaction": {
-    "Name": "Lautsprecher stummschalten", 
+    "Name": "Lautsprecher stummschalten",
     "Tooltip": "Wechseln der Lautsprecher-Stummschaltung"
   },
   "de.leonmarcel.teamspeak5.afkaction": {
-    "Name": "AFK-Status", 
+    "Name": "AFK-Status",
     "Tooltip": "Wechseln des AFK Statuses"
   },
   "de.leonmarcel.teamspeak5.qwhisperaction": {
-    "Name": "An ausgewählte whispern", 
+    "Name": "An ausgewählte whispern",
     "Tooltip": "An ausgewählte Clients im Serverbaum whispern"
   },
   "de.leonmarcel.teamspeak5.rwhisperaction": {
-    "Name": "Auf Whisper antworten", 
+    "Name": "Auf Whisper antworten",
     "Tooltip": "Auf letztes whispern antworten"
   },
   "de.leonmarcel.teamspeak5.lwhisperaction": {
-    "Name": "An Liste whispern", 
+    "Name": "An Liste whispern",
     "Tooltip": "An eine Whisperlist whispern"
   },
   "de.leonmarcel.teamspeak5.ptmaction": {
-    "Name": "Push-to-Mute", 
+    "Name": "Push-to-Mute",
     "Tooltip": "Aktiviere, um stumm zu schalten"
   },
   "de.leonmarcel.teamspeak5.pttaction": {
-    "Name": "Push-to-Talk", 
+    "Name": "Push-to-Talk",
     "Tooltip": "Aktiviere, um zu sprechen"
   },
   "Localization": {
-    "Operation Mode": "Betriebsmodus",
-    "Push To Activate": "Drücken zum Aktivieren",
-    "Toggle To Activate": "Umschalten zum Aktivieren",
-    "Whisperlist": "Whisperliste",
-    "Enter Whisperlist Name": "Whisperlist Namen eingeben",
-    "Could not connect to TeamSpeak Remote App": "Es konnte keine Verbindung zur TeamSpeak Remote App hergestellt werden",
-    "Setup": "Einrichtung",
-    "Open Setup Guide": "Anleitung zur Einrichtung öffnen"
+    "operationmode": "Betriebsmodus",
+
+    "pushtoactivate": "Drücken zum Aktivieren",
+    "toggletoactivate": "Umschalten zum Aktivieren",
+
+    "whisperlist": "Whisperliste",
+    "whisperlist.name": "Whisperlist Namen eingeben",
+
+    "noconnnection.noremoteapps": "Es konnte keine Verbindung zur TeamSpeak Remote App hergestellt werden",
+    "noconnnection.setup": "Einrichtung",
+    "noconnnection.openguide": "Anleitung zur Einrichtung öffnen",
+
+    "overlay.allserver": "All Active Talker",
+    "overlay.talkingserver": "Server you are Talking on",
+    "overlay.visibleserver": "Server you see in TeamSpeak"
   }
 }

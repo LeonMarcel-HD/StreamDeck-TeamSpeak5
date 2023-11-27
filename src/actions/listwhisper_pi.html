@@ -1,60 +1,64 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>TeamSpeak 5 -- ListWhisper Property Inspector</title>
+    <link rel="stylesheet" href="../libs/css/sdpi.css" />
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <title>de.leonmarcel.lwhisperaction</title>
-  <link rel="stylesheet" href="../libs/css/sdpi.css" />
-</head>
-
-<body>
-  <div class="sdpi-wrapper">
-    <div id="sdpi-layout1" style="display: none;">
-      <div class="sdpi-item">
-        <h3 class="sdpi-item" style="text-align: center;" data-localize
-          title="Could not connect to TeamSpeak Remote App"><strong>Could not connect to TeamSpeak Remote App</strong>
+  <body>
+    <div class="sdpi-wrapper">
+      <!-- Layout 1 to show help when TS is not connected -->
+      <div id="sdpi-layout1" style="display: none">
+        <h3 class="sdpi-item" style="text-align: center">
+          <strong data-localize>noconnnection.noremoteapps</strong>
+        </h3>
+        <br />
+        <div class="sdpi-item">
+          <div class="sdpi-item-label" data-localize>noconnnection.setup</div>
+          <button class="sdpi-item-value" data-localize id="open-setup">
+            noconnnection.openguide
+          </button>
+        </div>
       </div>
-      <div>
-        </p>
-        </p>
-      </div>
-      <div class="sdpi-item">
-        <div class="sdpi-item-label" data-localize title="Setup">Setup</div>
-        <button class="sdpi-item-value" value="Open Setup Guide" data-localize id="open-setup">Open Setup Guide
-        </button>
-      </div>
-    </div>
-    <div id="sdpi-layout2">
-      <div class="sdpi-item">
-        <div class="sdpi-item-label" data-localize title="Whisperlist">Whisperlist</div>
-        <input class="sdpi-item-value" data-localize placeholder="Enter Whisperlist Name" type="text" name="txtinput"
-          id="whisperlist">
-      </div>
-      <div type="radio" class="sdpi-item" id="adjust_radio">
-        <div class="sdpi-item-label" data-localize title="Operation Mode">Operation Mode</div>
-        <div class="sdpi-item-value">
-          <div class="sdpi-item-child">
-            <input id="rdio1" type="radio" name="rdio" data-localize>
-            <label for="rdio1" class="sdpi-item-label" data-localize title="Push To Activate"><span></span>
-              Push To Activate</label>
-          </div>
-          <div class="sdpi-item-child">
-            <input id="rdio2" type="radio" name="rdio" data-localize>
-            <label for="rdio2" class="sdpi-item-label" data-localize title="Toggle To Activate"><span></span>
-              Toggle To Activate</label>
+      <!-- Layout 2 to show settings when connected to TS -->
+      <div id="sdpi-layout2">
+        <div class="sdpi-item">
+          <div class="sdpi-item-label" data-localize>whisperlist</div>
+          <input
+            class="sdpi-item-value"
+            data-localize
+            placeholder="whisperlist.name"
+            type="text"
+            name="txtinput"
+            id="whisperlist"
+          />
+        </div>
+        <div type="radio" class="sdpi-item" id="adjust_radio">
+          <div class="sdpi-item-label" data-localize>operationmode</div>
+          <div class="sdpi-item-value">
+            <div class="sdpi-item-child">
+              <input id="rdio1" type="radio" name="rdio" data-localize />
+              <label for="rdio1" class="sdpi-item-label" data-localize>
+                <span></span>pushtoactivate
+              </label>
+            </div>
+            <div class="sdpi-item-child">
+              <input id="rdio2" type="radio" name="rdio" data-localize />
+              <label for="rdio2" class="sdpi-item-label" data-localize>
+                <span></span>toggletoactivate
+              </label>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  </div>
-  </div>
-  <script src="../libs/js/constants.js"></script>
-  <script src="../libs/js/events.js"></script>
-  <script src="../libs/js/api.js"></script>
-  <script src="../libs/js/property-inspector.js"></script>
-  <script src="../libs/js/dynamic-styles.js"></script>
-  <script src="listwhisper_pi.js"></script>
-</body>
-
+    
+    <script src="../libs/js/constants.js"></script>
+    <script src="../libs/js/events.js"></script>
+    <script src="../libs/js/api.js"></script>
+    <script src="../libs/js/property-inspector.js"></script>
+    <script src="../libs/js/dynamic-styles.js"></script>
+    <script src="listwhisper_pi.js"></script>
+  </body>
 </html>

@@ -1,38 +1,35 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>TeamSpeak 5 -- Connection Property Inspector</title>
+    <link rel="stylesheet" href="../libs/css/sdpi.css" />
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <title>de.leonmarcel.connection</title>
-  <link rel="stylesheet" href="../libs/css/sdpi.css" />
-</head>
-
-<body>
-  <div class="sdpi-wrapper">
-    <div id="sdpi-layout1" style="display: none;">
-      <div class="sdpi-item">
-        <h3 class="sdpi-item" style="text-align: center;" data-localize
-          title="Could not connect to TeamSpeak Remote App"><strong>Could not connect to TeamSpeak Remote App</strong>
+  <body>
+    <div class="sdpi-wrapper">
+      <!-- Layout 1 to show help when TS is not connected -->
+      <div id="sdpi-layout1" style="display: none">
+        <h3 class="sdpi-item" style="text-align: center">
+          <strong data-localize>noconnnection.noremoteapps</strong>
+        </h3>
+        <br />
+        <div class="sdpi-item">
+          <div class="sdpi-item-label" data-localize>noconnnection.setup</div>
+          <button class="sdpi-item-value" data-localize id="open-setup">
+            noconnnection.openguide
+          </button>
+        </div>
       </div>
-      <div>
-        </p>
-        </p>
-      </div>
-      <div class="sdpi-item">
-        <div class="sdpi-item-label" data-localize title="Setup">Setup</div>
-        <button class="sdpi-item-value" value="Open Setup Guide" data-localize id="open-setup">Open Setup Guide
-        </button>
-      </div>
+      <!-- Layout 2 to show settings when connected to TS -->
+      <div id="sdpi-layout2"></div>
     </div>
-    <div id="sdpi-layout2">
-  </div>
-  </div>
-  <script src="../libs/js/constants.js"></script>
-  <script src="../libs/js/events.js"></script>
-  <script src="../libs/js/api.js"></script>
-  <script src="../libs/js/property-inspector.js"></script>
-  <script src="../libs/js/dynamic-styles.js"></script>
-  <script src="connection.js"></script>
-</body>
 
+    <script src="../libs/js/constants.js"></script>
+    <script src="../libs/js/events.js"></script>
+    <script src="../libs/js/api.js"></script>
+    <script src="../libs/js/property-inspector.js"></script>
+    <script src="../libs/js/dynamic-styles.js"></script>
+    <script src="connection.js"></script>
+  </body>
 </html>

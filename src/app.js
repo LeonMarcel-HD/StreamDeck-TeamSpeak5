@@ -26,9 +26,7 @@ const reconnectTeamSpeak = async (apiKey) => {
 
 const createTeamSpeakSocket = (apiKey) => {
   // Opening a new websocket on 127.0.0.1 with default port 5899 (TeamSpeak Remote Apps)
-  if (TeamSpeakIsConnected) {
-    return;
-  } else {
+  if (!TeamSpeakIsConnected) {
     TeamSpeakWebsocket = new WebSocket("ws://127.0.0.1:5899");
     TeamSpeakWebsocket.onopen = () => {
       TeamSpeakIsConnected = true;
@@ -49,12 +47,13 @@ const createTeamSpeakSocket = (apiKey) => {
         })
       );
     };
+  } else {
+    return;
   }
 
   // Listening on messages coming from the websocket
   TeamSpeakWebsocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    // guard clause (Error handling)
     if (data.status && data.status.code !== 0) {
       console.log("TeamSpeak -- Error: ");
       console.log(data.status.message);
@@ -70,9 +69,12 @@ const createTeamSpeakSocket = (apiKey) => {
       settings.connectionStatus = TeamSpeakIsConnected;
       $SD.setGlobalSettings(settings);
 
-      // Clearing previously sended hotkeys if a disconnect happens
-      if (TeamSpeakIsConnected == true) {
-        if (TeamSpeakInitialized == true) {
+      // Clearing previously sended hotkeys if a disconnect happens.
+      // This is also needed for TeamSpeak to receive the first Hotkey.
+      // Using this "workaround" results in the TS client freaking out
+      // when loosing connection to the Plugin
+      if (TeamSpeakIsConnected) {
+        if (TeamSpeakInitialized) {
           TeamSpeakWebsocket.send(
             JSON.stringify({
               type: "buttonPress",
@@ -96,6 +98,7 @@ const createTeamSpeakSocket = (apiKey) => {
 
       // Handle self client properties events
     } else if (data.type === "clientSelfPropertyUpdated") {
+      // -> split into inputMuted
       if (data.payload.flag === "inputMuted") {
         if (data.payload.newValue === true) {
           TeamSpeakIsMuted = true;
@@ -104,6 +107,7 @@ const createTeamSpeakSocket = (apiKey) => {
         }
       }
 
+      // -> split into outputMuted
       if (data.payload.flag === "outputMuted") {
         if (data.payload.newValue === true) {
           TeamSpeakIsSoundMuted = true;
@@ -112,6 +116,7 @@ const createTeamSpeakSocket = (apiKey) => {
         }
       }
 
+      // -> split into away
       if (data.payload.flag === "away") {
         if (data.payload.newValue === true) {
           TeamSpeakIsAFK = true;
@@ -151,7 +156,7 @@ const createTeamSpeakSocket = (apiKey) => {
     $SD.setGlobalSettings(settings);
   };
 
-  // Reconnecting if the connection is closed
+  // Reconnect if the connection is closed
   TeamSpeakWebsocket.onclose = (event) => {
     console.log("TeamSpeak -- Disconnected: ");
     TeamSpeakIsConnected = false;
@@ -181,9 +186,8 @@ $SD.on("didReceiveGlobalSettings", ({ event, payload }) => {
   }
 });
 
-/**
- * The first event fired when Stream Deck starts
- */
+// The first event when Stream Deck starts
+// Getting global settings and sending to to PI for them to use
 $SD.onConnected(
   ({ actionInfo, appInfo, connection, messageType, port, uuid }) => {
     $SD.getGlobalSettings(uuid);
@@ -197,13 +201,14 @@ $SD.onConnected(
 // |            UPDATE STREAM DECK ICONS              |
 // ----------------------------------------------------
 
+// Update icon on canvas /sec to the mic mute status
 micMute.onWillAppear(({ context }) => {
   if (micInterval) {
     return;
   }
   micInterval = setInterval(() => {
     if (!TeamSpeakIsConnected) return;
-    if (TeamSpeakIsMuted == true) {
+    if (TeamSpeakIsMuted) {
       $SD.setState(context, true);
     } else {
       $SD.setState(context, false);
@@ -222,7 +227,7 @@ soundMute.onWillAppear(({ context }) => {
   }
   soundInterval = setInterval(() => {
     if (!TeamSpeakIsConnected) return;
-    if (TeamSpeakIsSoundMuted == true) {
+    if (TeamSpeakIsSoundMuted) {
       $SD.setState(context, true);
     } else {
       $SD.setState(context, false);
@@ -236,7 +241,7 @@ afk.onWillAppear(({ context }) => {
   }
   afkInterval = setInterval(() => {
     if (!TeamSpeakIsConnected) return;
-    if (TeamSpeakIsAFK == true) {
+    if (TeamSpeakIsAFK) {
       $SD.setState(context, true);
     } else {
       $SD.setState(context, false);
@@ -244,6 +249,7 @@ afk.onWillAppear(({ context }) => {
   }, 1000);
 });
 
+// Clearing active intervalls that request TS mic status
 micMute.onWillDisappear(({ context }) => {
   clearInterval(micInterval);
   micInterval = false;
@@ -397,7 +403,6 @@ lWhisper.onKeyDown(({ action, context, device, event, payload }) => {
 lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
-    1;
     return;
   }
   // Sending PTLW hotkey
@@ -416,7 +421,7 @@ lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
     $SD.setState(context, false);
     // Sending TTLW hotkey
   } else {
-    if (ttlwActive == true) {
+    if (ttlwActive) {
       ttlwActive = false;
       return;
     } else {
@@ -504,7 +509,7 @@ qWhisper.onKeyUp(({ action, context, device, event, payload }) => {
     $SD.setState(context, false);
     // Sending TTQW hotkey
   } else {
-    if (ttqwActive == true) {
+    if (ttqwActive) {
       ttqwActive = false;
       return;
     } else {
@@ -571,7 +576,6 @@ rWhisper.onKeyDown(({ action, context, device, event, payload }) => {
 rWhisper.onKeyUp(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
-    1;
     return;
   }
   // Sending PTRW hotkey
@@ -587,7 +591,7 @@ rWhisper.onKeyUp(({ action, context, device, event, payload }) => {
     $SD.setState(context, false);
     // Sending TTRW hotkey
   } else {
-    if (ttrwActive == true) {
+    if (ttrwActive) {
       ttrwActive = false;
       return;
     } else {
@@ -654,7 +658,6 @@ ptm.onKeyDown(({ action, context, device, event, payload }) => {
 ptm.onKeyUp(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
-    1;
     return;
   }
   // Sending PTM hotkey
@@ -670,7 +673,7 @@ ptm.onKeyUp(({ action, context, device, event, payload }) => {
     $SD.setState(context, false);
     // Sending TTM hotkey
   } else {
-    if (ttmActive == true) {
+    if (ttmActive) {
       ttmActive = false;
       return;
     } else {
@@ -737,7 +740,6 @@ ptt.onKeyDown(({ action, context, device, event, payload }) => {
 ptt.onKeyUp(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
-    1;
     return;
   }
   // Sending PTT hotkey
@@ -753,7 +755,7 @@ ptt.onKeyUp(({ action, context, device, event, payload }) => {
     $SD.setState(context, false);
     // Sending TTT hotkey
   } else {
-    if (tttActive == true) {
+    if (tttActive) {
       tttActive = false;
       return;
     } else {
