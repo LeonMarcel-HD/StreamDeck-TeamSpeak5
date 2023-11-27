@@ -170,10 +170,10 @@
       "Tooltip": "See currently Talking Users",
       "UUID": "de.leonmarcel.teamspeak5.overlay",
       "PropertyInspectorPath": "actions/overlay_pi.html",
-      "Icon": "assets/qwhisper/icon_qwhisper",
+      "Icon": "assets/overlay/icon_overlay",
       "States": [
         {
-          "Image": "assets/qwhisper/qwhisper_off"
+          "Image": "assets/overlay/overlay_blank"
         }
       ]
     }
