@@ -15,7 +15,7 @@ let soundInterval = false; // StreamDeck output state check to update icon/state
 let afkInterval = false; // StreamDeck afk state check to update icon/state
 let userarray = []; // Array to store all users in the current channel
 let overlaybtncontext;
-let talkingurls = new Set();
+let talkingurls = [];
 
 // Reconnect methode if a disconnect happens
 const reconnectTeamSpeak = async (apiKey) => {
@@ -96,13 +96,13 @@ const createTeamSpeakSocket = (apiKey) => {
           );
         }
         console.log(data.payload.connections);
-        if(data.payload.connections.length != 0){
+        if (data.payload.connections.length != 0) {
           data.payload.connections.forEach(connection => {
             connection.clientInfos.forEach(element => {
-            userarray[String(element.id)] = [];
-            userarray[String(element.id)]['user'] = element.properties.nickname;
-            userarray[String(element.id)]['avatar'] = element.properties.myteamspeakAvatar;
-           });
+              userarray[String(element.id)] = [];
+              userarray[String(element.id)]['user'] = element.properties.nickname;
+              userarray[String(element.id)]['avatar'] = element.properties.myteamspeakAvatar;
+            });
           });
         };
 
@@ -136,26 +136,32 @@ const createTeamSpeakSocket = (apiKey) => {
           TeamSpeakIsAFK = false;
         }
       }
-    }else if(data.type === "talkStatusChanged"){
-        url = userarray[String(data.payload.clientId)]['avatar'].split(";").sort((a,b) => ["2", "3", "4", "1"].indexOf(a[0]) - ["2", "3", "4", "1"].indexOf(b[0]))[0].split(",")[1];
-        if(data.payload.status === 1){
-            console.log(userarray[String(data.payload.clientId)]['user']+" spricht gerade");
-            talkingurls.add(url);
-        }else{
-          console.log(userarray[String(data.payload.clientId)]['user']+" spricht nicht mehr");
-          talkingurls.delete(url);
-        }
-        convertNAvatarsAndOneNumberToImageDataURL(Array.from(talkingurls), '6').then(dataUrl => {
-          $SD.setImage(overlaybtncontext, dataUrl);
+    } else if (data.type === "talkStatusChanged") {
+      url = userarray[String(data.payload.clientId)]['avatar'].split(";").sort((a, b) => ["2", "3", "4", "1"].indexOf(a[0]) - ["2", "3", "4", "1"].indexOf(b[0]))[0].split(",")[1];
+      if (data.payload.status === 1) {
+        console.log(userarray[String(data.payload.clientId)]['user'] + " spricht gerade");
+        talkingurls.push([data.payload.connectionId, data.payload.clientId, url]);
+      } else {
+        console.log(userarray[String(data.payload.clientId)]['user'] + " spricht nicht mehr");
+        talkingurls = talkingurls.filter(function (value) {
+          return !(value[0] === data.payload.connectionId && value[1] === data.payload.clientId);
         });
-  
-    }else if(data.type === "clientMoved"){
-        if(data.payload.oldChannelId == "0" && data.payload.properties !== null){
-           userarray[String(data.payload.clientId)] = [];
-           userarray[String(data.payload.clientId)]['user'] = data.payload.properties.nickname;
-           userarray[String(data.payload.clientId)]['avatar'] = data.payload.properties.myteamspeakAvatar;
-        }
-    }else {
+      }
+      urls = talkingurls.map(function (value) {
+        return value[2];
+      });
+      // TODO: count total number of users in channel to display it in the top left corner
+      generateMultiAvatarImage(urls, '6').then(dataUrl => {
+        $SD.setImage(overlaybtncontext, dataUrl);
+      });
+
+    } else if (data.type === "clientMoved") {
+      if (data.payload.oldChannelId == "0" && data.payload.properties !== null) {
+        userarray[String(data.payload.clientId)] = [];
+        userarray[String(data.payload.clientId)]['user'] = data.payload.properties.nickname;
+        userarray[String(data.payload.clientId)]['avatar'] = data.payload.properties.myteamspeakAvatar;
+      }
+    } else {
       // console.log(data);
     }
   };
@@ -792,7 +798,7 @@ ptt.onKeyUp(({ action, context, device, event, payload }) => {
 });
 
 
-convertNAvatarsAndOneNumberToImageDataURL = async (urls,n) => {
+generateMultiAvatarImage = async (urls, n) => {
   // one images takes up a little over 1/3 of the width (let's say 50px for now)
   // all images are cut into circles
   // images overlap by 1/3 of their radius
@@ -815,7 +821,7 @@ convertNAvatarsAndOneNumberToImageDataURL = async (urls,n) => {
   images = [];
   for (var i = 0; i < urls.length; i++) {
     // position describes the center of the image
-    y = canvas_center + (urls.length > 3) * (i < 3 ? (- single_offset) : single_offset); 
+    y = canvas_center + (urls.length > 3) * (i < 3 ? (- single_offset) : single_offset);
     x = canvas_center;
     switch (urls.length) {
       case 1:
@@ -832,10 +838,10 @@ convertNAvatarsAndOneNumberToImageDataURL = async (urls,n) => {
         break;
     }
 
+    url = urls[i] || 'assets/overlay/default_profilepicture.png';
     image = new Image();
-    image.src = urls[i];
+    image.src = url;
     await image.onload;
-
     images.push({
       img: image,
       x: x,
@@ -850,9 +856,11 @@ convertNAvatarsAndOneNumberToImageDataURL = async (urls,n) => {
   canvas.height = canvas_size;
   canvas.width = canvas_size;
 
-  // make background black
-  ctx.fillStyle = '#1c2538';
-  ctx.fillRect(0, 0, canvas_size, canvas_size);
+  // draw background from assets/overlay/overlay_blank.png
+  bkgrd_image = new Image();
+  bkgrd_image.src = 'assets/overlay/overlay_blank.png';
+  await bkgrd_image.onload;
+  ctx.drawImage(bkgrd_image, 0, 0, canvas_size, canvas_size);
 
   // draw all images
   for (var i = 0; i < images.length; i++) {
@@ -864,22 +872,29 @@ convertNAvatarsAndOneNumberToImageDataURL = async (urls,n) => {
     ctx.closePath();
     ctx.clip();
 
-    // draw red background
-    ctx.fillStyle = '#222b30';
-    ctx.fillRect(0, 0, canvas_size, canvas_size);
-    // draw image
-    ctx.drawImage(images[i].img, images[i].x - circle_radius, images[i].y - circle_radius, circle_radius * 2, circle_radius * 2);
+    // draw gradient
+    pp_bkgrd_image = new Image();
+    pp_bkgrd_image.src = 'assets/overlay/default_gradient.png';
+    await pp_bkgrd_image.onload;
+    x = images[i].x - circle_radius;
+    y = images[i].y - circle_radius;
+    w = circle_radius * 2;
+    h = circle_radius * 2;
+    ctx.drawImage(pp_bkgrd_image, x, y, w, h);
+    // draw image if it is not undefined
+    ctx.drawImage(images[i].img, x, y, w, h);
 
     // reset clip
     ctx.restore();
   }
 
-  // draw number in top right corner
-  ctx.fillStyle = '#000000';
+  // draw number in top left corner with an offset of 10px
+  ctx.fillStyle = '#fff';
   ctx.font = 'bold 24px Arial';
-  ctx.textAlign = 'right';
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
-  ctx.fillText(n, canvas_size, 0);
+  // offset is 10px
+  ctx.fillText(n, 10, 10);
 
   return canvas.toDataURL();
 }
