@@ -54,6 +54,7 @@ const createTeamSpeakSocket = (apiKey) => {
   // Listening on messages coming from the websocket
   TeamSpeakWebsocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
+    console.log(data);
     if (data.status && data.status.code !== 0) {
       console.log("TeamSpeak -- Error: ");
       console.log(data.status.message);
@@ -94,6 +95,17 @@ const createTeamSpeakSocket = (apiKey) => {
             })
           );
         }
+        console.log(data.payload.connections);
+        if(data.payload.connections.length != 0){
+          data.payload.connections.forEach(connection => {
+            connection.clientInfos.forEach(element => {
+            userarray[String(element.id)] = [];
+            userarray[String(element.id)]['user'] = element.properties.nickname;
+            userarray[String(element.id)]['avatar'] = element.properties.myteamspeakAvatar;
+           });
+          });
+        };
+
       }
 
       // Handle self client properties events
@@ -788,9 +800,6 @@ convertNAvatarsAndOneNumberToImageDataURL = async (urls,n) => {
   // the combination of all images will be centered in a square
   // the square will be 144 x 144
 
-  if (urls.length < 1) {
-    throw new Error('too few images');
-  }
   if (urls.length > 6) {
     urls = urls.slice(0, 6);
   }
