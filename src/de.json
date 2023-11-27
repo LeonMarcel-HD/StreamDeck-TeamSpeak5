@@ -47,8 +47,8 @@
     "noconnnection.setup": "Einrichtung",
     "noconnnection.openguide": "Anleitung zur Einrichtung öffnen",
 
-    "overlay.allserver": "All Active Talker",
-    "overlay.talkingserver": "Server you are Talking on",
-    "overlay.visibleserver": "Server you see in TeamSpeak"
+    "overlay.allserver": "Alle aktiven Sprecher",
+    "overlay.talkingserver": "Server auf dem du sprichst",
+    "overlay.visibleserver": "Server den du in TeamSpeak siehst"
   }
 }

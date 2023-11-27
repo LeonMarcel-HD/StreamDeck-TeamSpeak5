@@ -35,13 +35,20 @@
     "Tooltip": "Activate to Talk"
   },
   "Localization": {
-    "Operation Mode": "Operation Mode",
-    "Push To Activate": "Push to Activate",
-    "Toggle To Activate": "Toggle to Activate",
-    "Whisperlist": "Whisperlist",
-    "Enter Whisperlist Name": "Enter Whisperlist Name",
-    "couldnotopenremoteapps": "Could not connect to TeamSpeak Remote App",
-    "Setup": "Setup",
-    "Open Setup Guide": "Open Setup Guide"
+    "operationmode": "Operation Mode",
+
+    "pushtoactivate": "Push to Activate",
+    "toggletoactivate": "Toggle to Activate",
+
+    "whisperlist": "Whisperlist",
+    "whisperlist.name": "Enter Whisperlist Name",
+
+    "noconnnection.noremoteapps": "Could not connect to TeamSpeak Remote App",
+    "noconnnection.setup": "Setup",
+    "noconnnection.openguide": "Open Setup Guide",
+
+    "overlay.allserver": "All Active Talker",
+    "overlay.talkingserver": "Server you are Talking on",
+    "overlay.visibleserver": "Server you see in TeamSpeak"
   }
 }
