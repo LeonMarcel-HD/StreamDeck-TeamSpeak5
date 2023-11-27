@@ -164,6 +164,18 @@
           "Image": "assets/qwhisper/qwhisper_on"
         }
       ]
+    },
+    {
+      "Name": "Dummy Button",
+      "Tooltip": "Dummy Button",
+      "UUID": "de.leonmarcel.teamspeak5.dummyaction",
+      "PropertyInspectorPath": "actions/connection.html",
+      "Icon": "assets/qwhisper/icon_qwhisper",
+      "States": [
+        {
+          "Image": "assets/qwhisper/qwhisper_off"
+        }
+      ]
     }
   ]
 }
