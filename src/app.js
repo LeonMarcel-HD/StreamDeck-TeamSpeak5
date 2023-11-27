@@ -170,7 +170,7 @@ const createTeamSpeakSocket = (apiKey) => {
 const micMute = new Action("de.leonmarcel.teamspeak5.muteaction");
 const soundMute = new Action("de.leonmarcel.teamspeak5.soundmuteaction");
 const afk = new Action("de.leonmarcel.teamspeak5.afkaction");
-const overlaybtn = new Action("de.leonmarcel.teamspeak5.dummyaction"); //Overlay button for talking persons [EDIT THIS TO YOUR NEEDS]
+const overlaybtn = new Action("de.leonmarcel.teamspeak5.overlay");
 let settings;
 
 // Saving the APIKey from TeamSpeak into the Elgato settings database
