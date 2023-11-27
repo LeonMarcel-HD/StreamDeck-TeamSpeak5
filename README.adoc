@@ -76,6 +76,6 @@ If you have any feature requests or suggestions for improving the Plugin, feel f
 
 == Credits
 
-I would like to thank https://github.com/Gamer92000[**Gamer92000**] for their contribution to this project.
+I would like to thank https://github.com/Gamer92000[**Gamer92000**] | https://github.com/iiVoiX[**iiVoiX**] for their contribution to this project.
 
 Thank you for using this Plugin <3!
