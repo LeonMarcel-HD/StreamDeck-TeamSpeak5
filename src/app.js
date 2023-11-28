@@ -27,6 +27,11 @@ const reconnectTeamSpeak = async (apiKey) => {
 const createTeamSpeakSocket = (apiKey) => {
   // Opening a new websocket on 127.0.0.1 with default port 5899 (TeamSpeak Remote Apps)
   if (!TeamSpeakIsConnected) {
+    WebSocket.prototype.oldsend = WebSocket.prototype.send;
+    WebSocket.prototype.send = function(data) {
+      console.log(data);
+      WebSocket.prototype.oldsend.apply(this, [data]);
+    }
     TeamSpeakWebsocket = new WebSocket("ws://127.0.0.1:5899");
     TeamSpeakWebsocket.onopen = () => {
       TeamSpeakIsConnected = true;
@@ -58,6 +63,7 @@ const createTeamSpeakSocket = (apiKey) => {
     if (data.status && data.status.code !== 0) {
       console.log("TeamSpeak -- Error: ");
       console.log(data.status.message);
+      TeamSpeakIsConnected = false;
       return;
     }
     console.log(data);
@@ -65,36 +71,36 @@ const createTeamSpeakSocket = (apiKey) => {
     if (data.type === "auth") {
       console.log("TeamSpeak -- Auth: ");
       TeamSpeakIsConnected = true;
-      const key = data.payload.apiKey;
-      settings.apiKey = key;
+      settings.apiKey = data.payload.apiKey;
       settings.connectionStatus = TeamSpeakIsConnected;
       $SD.setGlobalSettings(settings);
 
+      // TODO REMOVE soonTM
       // Clearing previously sended hotkeys if a disconnect happens.
       // This is also needed for TeamSpeak to receive the first Hotkey.
       // Using this "workaround" results in the TS client freaking out
       // when loosing connection to the Plugin
       if (TeamSpeakIsConnected) {
-        if (TeamSpeakInitialized) {
-          TeamSpeakWebsocket.send(
-            JSON.stringify({
-              type: "buttonPress",
-              payload: { button: "mute", state: false },
-            })
-          );
-          TeamSpeakWebsocket.send(
-            JSON.stringify({
-              type: "buttonPress",
-              payload: { button: "afk", state: false },
-            })
-          );
-          TeamSpeakWebsocket.send(
-            JSON.stringify({
-              type: "buttonPress",
-              payload: { button: "soundmute", state: false },
-            })
-          );
-        }
+        // if (TeamSpeakInitialized) {
+        //   TeamSpeakWebsocket.send(
+        //     JSON.stringify({
+        //       type: "buttonPress",
+        //       payload: { button: "mute", state: true },
+        //     })
+        //   );
+        //   TeamSpeakWebsocket.send(
+        //     JSON.stringify({
+        //       type: "buttonPress",
+        //       payload: { button: "afk", state: true },
+        //     })
+        //   );
+        //   TeamSpeakWebsocket.send(
+        //     JSON.stringify({
+        //       type: "buttonPress",
+        //       payload: { button: "soundmute", state: true },
+        //     })
+        //   );
+        // }
         console.log(data.payload.connections);
         if (data.payload.connections.length != 0) {
           data.payload.connections.forEach(connection => {
@@ -300,7 +306,7 @@ micMute.onKeyDown(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "mute", state: true },
+      payload: { button: "mute", state: false },
     })
   );
 });
@@ -313,7 +319,7 @@ micMute.onKeyUp(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "mute", state: false },
+      payload: { button: "mute", state: true },
     })
   );
 });
@@ -327,7 +333,7 @@ soundMute.onKeyDown(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "soundmute", state: true },
+      payload: { button: "soundmute", state: false },
     })
   );
 });
@@ -340,7 +346,7 @@ soundMute.onKeyUp(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "soundmute", state: false },
+      payload: { button: "soundmute", state: true },
     })
   );
 });
@@ -353,7 +359,7 @@ afk.onKeyDown(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "afk", state: true },
+      payload: { button: "afk", state: false },
     })
   );
 });
@@ -366,7 +372,7 @@ afk.onKeyUp(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "afk", state: false },
+      payload: { button: "afk", state: true },
     })
   );
 });
