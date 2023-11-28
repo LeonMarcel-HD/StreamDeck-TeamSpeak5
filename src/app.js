@@ -416,7 +416,7 @@ lWhisper.onKeyDown(({ action, context, device, event, payload }) => {
         JSON.stringify({
           type: "buttonPress",
           payload: {
-            button: payload.settings.whisperlist + ".lWhisper",
+            button: payload.settings.input + ".lWhisper",
             state: false,
           },
         })
@@ -441,7 +441,7 @@ lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
         JSON.stringify({
           type: "buttonPress",
           payload: {
-            button: payload.settings.whisperlist + ".lWhisper", //TODO
+            button: payload.settings.input + ".lWhisper", //TODO
             state: true,
           },
         })
@@ -454,7 +454,7 @@ lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
         JSON.stringify({
           type: "buttonPress",
           payload: {
-            button: payload.settings.whisperlist + ".lWhisper",
+            button: payload.settings.input + ".lWhisper",
             state: ttlwActive,
           },
         })
