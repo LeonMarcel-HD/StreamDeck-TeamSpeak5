@@ -5,17 +5,29 @@
 let TeamSpeakWebsocket;
 let TeamSpeakInitialized = false;
 let TeamSpeakIsConnected = false; // TeamSpeak socket status
-let TeamSpeakIsMuted = false; // TeamSpeak mic status
-let TeamSpeakIsSoundMuted = false; // TeamSpeak output status
-let TeamSpeakIsAFK = false; // TeamSpeak afk status
-let TeamSpeakPTT = false; // TeamSpeak ptt status
-let TeamSpeakPTM = false; // TeamSpeak ptm status
-let micInterval = false; // StreamDeck mic state check to update icon/state
-let soundInterval = false; // StreamDeck output state check to update icon/state
-let afkInterval = false; // StreamDeck afk state check to update icon/state
 let userarray = []; // Array to store all users in the current channel
-let overlaybtncontext;
 let talkingurls = [];
+
+let afkContexts = []; // Stores all context ids of afk buttons
+let micMuteContexts = []; // Stores all context ids of mute buttons
+let outputMuteContexts = []; // Stores all context ids of output buttons
+let overlayContexts = []; // Stores all context ids of overlay buttons
+
+// Elgato stuff
+const micMute = new Action("de.leonmarcel.teamspeak5.muteaction");
+const soundMute = new Action("de.leonmarcel.teamspeak5.soundmuteaction");
+const afk = new Action("de.leonmarcel.teamspeak5.afkaction");
+const overlaybtn = new Action("de.leonmarcel.teamspeak5.overlay");
+const lWhisper = new Action("de.leonmarcel.teamspeak5.lwhisperaction");
+let ttlwActive = false;
+const qWhisper = new Action("de.leonmarcel.teamspeak5.qwhisperaction");
+let ttqwActive = false;
+const rWhisper = new Action("de.leonmarcel.teamspeak5.rwhisperaction");
+let ttrwActive = false;
+const ptm = new Action("de.leonmarcel.teamspeak5.ptmaction");
+let ttmActive = false;
+const ptt = new Action("de.leonmarcel.teamspeak5.pttaction");
+let tttActive = false;
 
 // Reconnect methode if a disconnect happens
 const reconnectTeamSpeak = async (apiKey) => {
@@ -54,6 +66,7 @@ const createTeamSpeakSocket = (apiKey) => {
   // Listening on messages coming from the websocket
   TeamSpeakWebsocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
+    let settings;
     console.log(data);
     if (data.status && data.status.code !== 0) {
       console.log("TeamSpeak -- Error: ");
@@ -70,32 +83,7 @@ const createTeamSpeakSocket = (apiKey) => {
       settings.connectionStatus = TeamSpeakIsConnected;
       $SD.setGlobalSettings(settings);
 
-      // TODO REMOVE soonTM
-      // Clearing previously sended hotkeys if a disconnect happens.
-      // This is also needed for TeamSpeak to receive the first Hotkey.
-      // Using this "workaround" results in the TS client freaking out
-      // when loosing connection to the Plugin
       if (TeamSpeakIsConnected) {
-        // if (TeamSpeakInitialized) {
-        //   TeamSpeakWebsocket.send(
-        //     JSON.stringify({
-        //       type: "buttonPress",
-        //       payload: { button: "mute", state: true },
-        //     })
-        //   );
-        //   TeamSpeakWebsocket.send(
-        //     JSON.stringify({
-        //       type: "buttonPress",
-        //       payload: { button: "afk", state: true },
-        //     })
-        //   );
-        //   TeamSpeakWebsocket.send(
-        //     JSON.stringify({
-        //       type: "buttonPress",
-        //       payload: { button: "soundmute", state: true },
-        //     })
-        //   );
-        // }
         console.log(data.payload.connections);
         if (data.payload.connections.length != 0) {
           data.payload.connections.forEach((connection) => {
@@ -114,29 +102,21 @@ const createTeamSpeakSocket = (apiKey) => {
     } else if (data.type === "clientSelfPropertyUpdated") {
       // -> split into inputMuted
       if (data.payload.flag === "inputMuted") {
-        if (data.payload.newValue === true) {
-          TeamSpeakIsMuted = true;
-        } else {
-          TeamSpeakIsMuted = false;
-        }
+        micMuteContexts.forEach((context) => {
+          $SD.setState(context, data.payload.newValue);
+        });
       }
-
       // -> split into outputMuted
       if (data.payload.flag === "outputMuted") {
-        if (data.payload.newValue === true) {
-          TeamSpeakIsSoundMuted = true;
-        } else {
-          TeamSpeakIsSoundMuted = false;
-        }
+        outputMuteContexts.forEach((context) => {
+          $SD.setState(context, data.payload.newValue);
+        });
       }
-
       // -> split into away
       if (data.payload.flag === "away") {
-        if (data.payload.newValue === true) {
-          TeamSpeakIsAFK = true;
-        } else {
-          TeamSpeakIsAFK = false;
-        }
+        awayContexts.forEach((context) => {
+          $SD.setState(context, data.payload.newValue);
+        });
       }
     } else if (data.type === "talkStatusChanged") {
       url = userarray[String(data.payload.clientId)]["avatar"]
@@ -173,7 +153,9 @@ const createTeamSpeakSocket = (apiKey) => {
       });
       // TODO: count total number of users in channel to display it in the top left corner
       generateMultiAvatarImage(urls, "6").then((dataUrl) => {
-        $SD.setImage(overlaybtncontext, dataUrl);
+        overlayContexts.forEach((context) => {
+          $SD.setImage(context, dataUrl);
+        });
       });
     } else if (data.type === "clientMoved") {
       if (
@@ -194,6 +176,7 @@ const createTeamSpeakSocket = (apiKey) => {
   // Error handling if connection could not be opend
   TeamSpeakWebsocket.onerror = (err) => {
     console.log("TeamSpeak -- Error: ", err);
+    let settings;
     TeamSpeakIsConnected = false;
     settings.connectionStatus = TeamSpeakIsConnected;
     $SD.setGlobalSettings(settings);
@@ -202,6 +185,7 @@ const createTeamSpeakSocket = (apiKey) => {
   // Reconnect if the connection is closed
   TeamSpeakWebsocket.onclose = (event) => {
     console.log("TeamSpeak -- Disconnected: ");
+    let settings;
     TeamSpeakIsConnected = false;
     settings.connectionStatus = TeamSpeakIsConnected;
     $SD.setGlobalSettings(settings);
@@ -209,16 +193,10 @@ const createTeamSpeakSocket = (apiKey) => {
   };
 };
 
-// Elgato stuff
-const micMute = new Action("de.leonmarcel.teamspeak5.muteaction");
-const soundMute = new Action("de.leonmarcel.teamspeak5.soundmuteaction");
-const afk = new Action("de.leonmarcel.teamspeak5.afkaction");
-const overlaybtn = new Action("de.leonmarcel.teamspeak5.overlay");
-let settings;
-
 // Saving the APIKey from TeamSpeak into the Elgato settings database
 $SD.on("didReceiveGlobalSettings", ({ event, payload }) => {
   console.log("Stream Deck -- Settings received: ");
+  let settings;
 
   settings = payload.settings;
   console.log(payload);
@@ -244,72 +222,40 @@ $SD.onConnected(
 // |            UPDATE STREAM DECK ICONS              |
 // ----------------------------------------------------
 
-// Update icon on canvas /sec to the mic mute status
+// Update Mic
 micMute.onWillAppear(({ context }) => {
-  if (micInterval) {
-    return;
-  }
-  micInterval = setInterval(() => {
-    if (!TeamSpeakIsConnected) return;
-    if (TeamSpeakIsMuted) {
-      $SD.setState(context, true);
-    } else {
-      $SD.setState(context, false);
-    }
-  }, 1000);
+  micMuteContexts.push(context);
 });
 
-overlaybtn.onWillAppear(({ context }) => {
-  console.log("Overlay button context: " + context);
-  overlaybtncontext = context;
-});
-
-soundMute.onWillAppear(({ context }) => {
-  if (soundInterval) {
-    return;
-  }
-  soundInterval = setInterval(() => {
-    if (!TeamSpeakIsConnected) return;
-    if (TeamSpeakIsSoundMuted) {
-      $SD.setState(context, true);
-    } else {
-      $SD.setState(context, false);
-    }
-  }, 1000);
-});
-
-afk.onWillAppear(({ context }) => {
-  if (afkInterval) {
-    return;
-  }
-  afkInterval = setInterval(() => {
-    if (!TeamSpeakIsConnected) return;
-    if (TeamSpeakIsAFK) {
-      $SD.setState(context, true);
-    } else {
-      $SD.setState(context, false);
-    }
-  }, 1000);
-});
-
-// Clearing active intervalls that request TS mic status
 micMute.onWillDisappear(({ context }) => {
-  clearInterval(micInterval);
-  micInterval = false;
+  micMuteContexts = micMuteContexts.filter((x) => x != context);
+});
+
+// Update Sound
+soundMute.onWillAppear(({ context }) => {
+  soundMuteContexts.push(context);
 });
 
 soundMute.onWillDisappear(({ context }) => {
-  clearInterval(soundInterval);
-  soundInterval = false;
+  soundMuteContexts = soundMuteContexts.filter((x) => x != context);
+});
+
+// Update AFK
+afk.onWillAppear(({ context }) => {
+  awayContexts.push(context);
 });
 
 afk.onWillDisappear(({ context }) => {
-  clearInterval(afkInterval);
-  afkInterval = false;
+  awayContexts = awayContexts.filter((x) => x != context);
+});
+
+// Update Overlay
+overlaybtn.onWillAppear(({ context }) => {
+  overlayContexts.push(context);
 });
 
 overlaybtn.onWillDisappear(({ context }) => {
-  overlaybtncontext = undefined;
+  overlayContexts = overlayContexts.filter((x) => x != context);
 });
 
 // ----------------------------------------------------
@@ -401,9 +347,6 @@ afk.onKeyUp(({ action, context, device, event, payload }) => {
 // |          SENDING LIST WHISPER HOTKEY             |
 // ----------------------------------------------------
 
-const lWhisper = new Action("de.leonmarcel.teamspeak5.lwhisperaction");
-let ttlwActive = false;
-
 lWhisper.onKeyDown(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
@@ -441,7 +384,7 @@ lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
         JSON.stringify({
           type: "buttonPress",
           payload: {
-            button: payload.settings.input + ".lWhisper", //TODO
+            button: payload.settings.input + ".lWhisper",
             state: true,
           },
         })
@@ -467,9 +410,6 @@ lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
 // ----------------------------------------------------
 // |         SENDING QUICK WHISPER HOTKEY             |
 // ----------------------------------------------------
-
-const qWhisper = new Action("de.leonmarcel.teamspeak5.qwhisperaction");
-let ttqwActive = false;
 
 qWhisper.onKeyDown(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
@@ -535,9 +475,6 @@ qWhisper.onKeyUp(({ action, context, device, event, payload }) => {
 // |           SENDING REPLY WHISPER HOTKEY           |
 // ----------------------------------------------------
 
-const rWhisper = new Action("de.leonmarcel.teamspeak5.rwhisperaction");
-let ttrwActive = false;
-
 rWhisper.onKeyDown(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
@@ -601,9 +538,6 @@ rWhisper.onKeyUp(({ action, context, device, event, payload }) => {
 // ----------------------------------------------------
 // |                SENDING PTM HOTKEY                |
 // ----------------------------------------------------
-
-const ptm = new Action("de.leonmarcel.teamspeak5.ptmaction");
-let ttmActive = false;
 
 ptm.onKeyDown(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
@@ -669,9 +603,6 @@ ptm.onKeyUp(({ action, context, device, event, payload }) => {
 // |                SENDING PTT HOTKEY                |
 // ----------------------------------------------------
 
-const ptt = new Action("de.leonmarcel.teamspeak5.pttaction");
-let tttActive = false;
-
 ptt.onKeyDown(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
@@ -732,6 +663,9 @@ ptt.onKeyUp(({ action, context, device, event, payload }) => {
   }
 });
 
+// ----------------------------------------------------
+// |         GENERATING IMAGES FOR OVERLAY            |
+// ----------------------------------------------------
 
 generateMultiAvatarImage = async (urls, n) => {
   // one images takes up a little over 1/3 of the width (let's say 50px for now)
