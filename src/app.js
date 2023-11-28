@@ -27,11 +27,6 @@ const reconnectTeamSpeak = async (apiKey) => {
 const createTeamSpeakSocket = (apiKey) => {
   // Opening a new websocket on 127.0.0.1 with default port 5899 (TeamSpeak Remote Apps)
   if (!TeamSpeakIsConnected) {
-    WebSocket.prototype.oldsend = WebSocket.prototype.send;
-    WebSocket.prototype.send = function(data) {
-      console.log(data);
-      WebSocket.prototype.oldsend.apply(this, [data]);
-    }
     TeamSpeakWebsocket = new WebSocket("ws://127.0.0.1:5899");
     TeamSpeakWebsocket.onopen = () => {
       TeamSpeakIsConnected = true;
@@ -103,15 +98,16 @@ const createTeamSpeakSocket = (apiKey) => {
         // }
         console.log(data.payload.connections);
         if (data.payload.connections.length != 0) {
-          data.payload.connections.forEach(connection => {
-            connection.clientInfos.forEach(element => {
+          data.payload.connections.forEach((connection) => {
+            connection.clientInfos.forEach((element) => {
               userarray[String(element.id)] = [];
-              userarray[String(element.id)]['user'] = element.properties.nickname;
-              userarray[String(element.id)]['avatar'] = element.properties.myteamspeakAvatar;
+              userarray[String(element.id)]["user"] =
+                element.properties.nickname;
+              userarray[String(element.id)]["avatar"] =
+                element.properties.myteamspeakAvatar;
             });
           });
-        };
-
+        }
       }
 
       // Handle self client properties events
@@ -143,29 +139,52 @@ const createTeamSpeakSocket = (apiKey) => {
         }
       }
     } else if (data.type === "talkStatusChanged") {
-      url = userarray[String(data.payload.clientId)]['avatar'].split(";").sort((a, b) => ["2", "3", "4", "1"].indexOf(a[0]) - ["2", "3", "4", "1"].indexOf(b[0]))[0].split(",")[1];
+      url = userarray[String(data.payload.clientId)]["avatar"]
+        .split(";")
+        .sort(
+          (a, b) =>
+            ["2", "3", "4", "1"].indexOf(a[0]) -
+            ["2", "3", "4", "1"].indexOf(b[0])
+        )[0]
+        .split(",")[1];
       if (data.payload.status === 1) {
-        console.log(userarray[String(data.payload.clientId)]['user'] + " spricht gerade");
-        talkingurls.push([data.payload.connectionId, data.payload.clientId, url]);
+        console.log(
+          userarray[String(data.payload.clientId)]["user"] + " spricht gerade"
+        );
+        talkingurls.push([
+          data.payload.connectionId,
+          data.payload.clientId,
+          url,
+        ]);
       } else {
-        console.log(userarray[String(data.payload.clientId)]['user'] + " spricht nicht mehr");
+        console.log(
+          userarray[String(data.payload.clientId)]["user"] +
+            " spricht nicht mehr"
+        );
         talkingurls = talkingurls.filter(function (value) {
-          return !(value[0] === data.payload.connectionId && value[1] === data.payload.clientId);
+          return !(
+            value[0] === data.payload.connectionId &&
+            value[1] === data.payload.clientId
+          );
         });
       }
       urls = talkingurls.map(function (value) {
         return value[2];
       });
       // TODO: count total number of users in channel to display it in the top left corner
-      generateMultiAvatarImage(urls, '6').then(dataUrl => {
+      generateMultiAvatarImage(urls, "6").then((dataUrl) => {
         $SD.setImage(overlaybtncontext, dataUrl);
       });
-
     } else if (data.type === "clientMoved") {
-      if (data.payload.oldChannelId == "0" && data.payload.properties !== null) {
+      if (
+        data.payload.oldChannelId == "0" &&
+        data.payload.properties !== null
+      ) {
         userarray[String(data.payload.clientId)] = [];
-        userarray[String(data.payload.clientId)]['user'] = data.payload.properties.nickname;
-        userarray[String(data.payload.clientId)]['avatar'] = data.payload.properties.myteamspeakAvatar;
+        userarray[String(data.payload.clientId)]["user"] =
+          data.payload.properties.nickname;
+        userarray[String(data.payload.clientId)]["avatar"] =
+          data.payload.properties.myteamspeakAvatar;
       }
     } else {
       // console.log(data);
@@ -351,6 +370,7 @@ soundMute.onKeyUp(({ action, context, device, event, payload }) => {
   );
 });
 
+// AFK
 afk.onKeyDown(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
@@ -378,78 +398,20 @@ afk.onKeyUp(({ action, context, device, event, payload }) => {
 });
 
 // ----------------------------------------------------
-// |              SENDING LWHISPER HOTKEY             |
+// |          SENDING LIST WHISPER HOTKEY             |
 // ----------------------------------------------------
 
 const lWhisper = new Action("de.leonmarcel.teamspeak5.lwhisperaction");
 let ttlwActive = false;
-let ttlwActiveInterval;
 
 lWhisper.onKeyDown(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
     return;
   }
-  // Sending PTLW hotkey
-  if (payload.settings.pushtotalk === "on") {
-    TeamSpeakWebsocket.send(
-      JSON.stringify({
-        type: "buttonPress",
-        payload: {
-          button: payload.settings.whisperlist + ".lWhisper",
-          state: false,
-        },
-      })
-    );
-    $SD.setState(context, true);
-    // Sending TTLW hotkey
-  } else {
-    if (ttlwActive == false) {
-      return;
-    } else {
-      ttlwActive == false;
-      clearInterval(ttlwActiveInterval);
-
-      TeamSpeakWebsocket.send(
-        JSON.stringify({
-          type: "buttonPress",
-          payload: {
-            button: payload.settings.whisperlist + ".lWhisper",
-            state: true,
-          },
-        })
-      );
-      $SD.setState(context, false);
-    }
-  }
-});
-
-lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
-  if (!TeamSpeakIsConnected) {
-    $SD.showAlert(context);
-    return;
-  }
-  // Sending PTLW hotkey
-  if (payload.settings.pushtotalk === "on") {
-    TeamSpeakWebsocket.send(
-      JSON.stringify({
-        type: "buttonPress",
-        payload: {
-          button: payload.settings.whisperlist + ".lWhisper",
-          state: true,
-        },
-      })
-    );
-    ttlwActive == false;
-    clearInterval(ttlwActiveInterval);
-    $SD.setState(context, false);
-    // Sending TTLW hotkey
-  } else {
-    if (ttlwActive) {
-      ttlwActive = false;
-      return;
-    } else {
-      ttlwActive = true;
+  switch (payload.settings.ptt) {
+    // Sending PTLW hotkey
+    case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
@@ -459,59 +421,78 @@ lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
           },
         })
       );
-      ttlwActiveInterval = setInterval(() => {
-        TeamSpeakWebsocket.send(
-          JSON.stringify({
-            type: "buttonPress",
-            payload: {
-              button: payload.settings.whisperlist + ".lWhisper",
-              state: false,
-            },
-          })
-        );
-      }, 500);
       $SD.setState(context, true);
-    }
+      // Sending TTLW hotkey
+      break;
+    case 2:
+      $SD.setState(context, true);
+  }
+});
+
+lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
+  if (!TeamSpeakIsConnected) {
+    $SD.showAlert(context);
+    return;
+  }
+  switch (payload.settings.ptt) {
+    // Sending PTLW hotkey
+    case 1:
+      TeamSpeakWebsocket.send(
+        JSON.stringify({
+          type: "buttonPress",
+          payload: {
+            button: payload.settings.whisperlist + ".lWhisper", //TODO
+            state: true,
+          },
+        })
+      );
+      $SD.setState(context, false);
+      break;
+    // Sending TTLW hotkey
+    case 2:
+      TeamSpeakWebsocket.send(
+        JSON.stringify({
+          type: "buttonPress",
+          payload: {
+            button: payload.settings.whisperlist + ".lWhisper",
+            state: ttlwActive,
+          },
+        })
+      );
+      ttlwActive = !ttlwActive;
+      $SD.setState(context, ttlwActive);
   }
 });
 
 // ----------------------------------------------------
-// |              SENDING QWHISPER HOTKEY             |
+// |         SENDING QUICK WHISPER HOTKEY             |
 // ----------------------------------------------------
 
 const qWhisper = new Action("de.leonmarcel.teamspeak5.qwhisperaction");
 let ttqwActive = false;
-let ttqwActiveInterval;
 
 qWhisper.onKeyDown(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
     return;
   }
-  // Sending PTQW hotkey
-  if (payload.settings.pushtotalk === "on") {
-    TeamSpeakWebsocket.send(
-      JSON.stringify({
-        type: "buttonPress",
-        payload: { button: "qWhisper", state: false },
-      })
-    );
-    $SD.setState(context, true);
-    // Sending TTQW hotkey
-  } else {
-    if (ttqwActive == false) {
-      return;
-    } else {
-      ttqwActive == false;
-      clearInterval(ttqwActiveInterval);
+  switch (payload.settings.ptt) {
+    // Sending PTQW hotkey
+    case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
-          payload: { button: "qWhisper", state: true },
+          payload: {
+            button: "qWhisper",
+            state: false,
+          },
         })
       );
-      $SD.setState(context, false);
-    }
+      $SD.setState(context, true);
+      // Sending TTQW hotkey
+      break;
+    case 2:
+      $SD.setState(context, true);
   }
 });
 
@@ -520,80 +501,65 @@ qWhisper.onKeyUp(({ action, context, device, event, payload }) => {
     $SD.showAlert(context);
     return;
   }
-  // Sending PTQW hotkey
-  if (payload.settings.pushtotalk === "on") {
-    TeamSpeakWebsocket.send(
-      JSON.stringify({
-        type: "buttonPress",
-        payload: { button: "qWhisper", state: true },
-      })
-    );
-    ttqwActive == false;
-    clearInterval(ttqwActiveInterval);
-    $SD.setState(context, false);
-    // Sending TTQW hotkey
-  } else {
-    if (ttqwActive) {
-      ttqwActive = false;
-      return;
-    } else {
-      ttqwActive = true;
+  switch (payload.settings.ptt) {
+    // Sending PTQW hotkey
+    case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
-          payload: { button: "qWhisper", state: false },
+          payload: {
+            button: "qWhisper",
+            state: true,
+          },
         })
       );
-      ttqwActiveInterval = setInterval(() => {
-        TeamSpeakWebsocket.send(
-          JSON.stringify({
-            type: "buttonPress",
-            payload: { button: "qWhisper", state: false },
-          })
-        );
-      }, 500);
-      $SD.setState(context, true);
-    }
+      $SD.setState(context, false);
+      break;
+    // Sending TTQW hotkey
+    case 2:
+      TeamSpeakWebsocket.send(
+        JSON.stringify({
+          type: "buttonPress",
+          payload: {
+            button: "qWhisper",
+            state: ttqwActive,
+          },
+        })
+      );
+      ttqwActive = !ttqwActive;
+      $SD.setState(context, ttqwActive);
   }
 });
 
 // ----------------------------------------------------
-// |              SENDING RWHISPER HOTKEY             |
+// |           SENDING REPLY WHISPER HOTKEY           |
 // ----------------------------------------------------
 
 const rWhisper = new Action("de.leonmarcel.teamspeak5.rwhisperaction");
 let ttrwActive = false;
-let ttrwActiveInterval;
 
 rWhisper.onKeyDown(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
     return;
   }
-  // Sending PTRW hotkey
-  if (payload.settings.pushtotalk === "on") {
-    TeamSpeakWebsocket.send(
-      JSON.stringify({
-        type: "buttonPress",
-        payload: { button: "rwhisper", state: false },
-      })
-    );
-    $SD.setState(context, true);
-    // Sending TTRW hotkey
-  } else {
-    if (ttrwActive == false) {
-      return;
-    } else {
-      ttrwActive == false;
-      clearInterval(ttrwActiveInterval);
+  switch (payload.settings.ptt) {
+    // Sending PTRW hotkey
+    case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
-          payload: { button: "rwhisper", state: true },
+          payload: {
+            button: "rwhisper",
+            state: false,
+          },
         })
       );
-      $SD.setState(context, false);
-    }
+      $SD.setState(context, true);
+      // Sending TTRW hotkey
+      break;
+    case 2:
+      $SD.setState(context, true);
   }
 });
 
@@ -602,40 +568,33 @@ rWhisper.onKeyUp(({ action, context, device, event, payload }) => {
     $SD.showAlert(context);
     return;
   }
-  // Sending PTRW hotkey
-  if (payload.settings.pushtotalk === "on") {
-    TeamSpeakWebsocket.send(
-      JSON.stringify({
-        type: "buttonPress",
-        payload: { button: "rwhisper", state: true },
-      })
-    );
-    ttrwActive == false;
-    clearInterval(ttrwActiveInterval);
-    $SD.setState(context, false);
-    // Sending TTRW hotkey
-  } else {
-    if (ttrwActive) {
-      ttrwActive = false;
-      return;
-    } else {
-      ttrwActive = true;
+  switch (payload.settings.ptt) {
+    // Sending PTRW hotkey
+    case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
-          payload: { button: "rwhisper", state: false },
+          payload: {
+            button: "rwhisper",
+            state: true,
+          },
         })
       );
-      ttrwActiveInterval = setInterval(() => {
-        TeamSpeakWebsocket.send(
-          JSON.stringify({
-            type: "buttonPress",
-            payload: { button: "rwhisper", state: false },
-          })
-        );
-      }, 500);
-      $SD.setState(context, true);
-    }
+      $SD.setState(context, false);
+      break;
+    // Sending TTRW hotkey
+    case 2:
+      TeamSpeakWebsocket.send(
+        JSON.stringify({
+          type: "buttonPress",
+          payload: {
+            button: "rwhisper",
+            state: ttrwActive,
+          },
+        })
+      );
+      ttrwActive = !ttrwActive;
+      $SD.setState(context, ttrwActive);
   }
 });
 
@@ -645,37 +604,29 @@ rWhisper.onKeyUp(({ action, context, device, event, payload }) => {
 
 const ptm = new Action("de.leonmarcel.teamspeak5.ptmaction");
 let ttmActive = false;
-let ttmActiveInterval;
 
 ptm.onKeyDown(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
     return;
   }
-  // Sending PTM hotkey
-  if (payload.settings.pushtotalk === "on") {
-    TeamSpeakWebsocket.send(
-      JSON.stringify({
-        type: "buttonPress",
-        payload: { button: "ptm", state: false },
-      })
-    );
-    $SD.setState(context, true);
-    // Sending TTM hotkey
-  } else {
-    if (ttmActive == false) {
-      return;
-    } else {
-      ttmActive == false;
-      clearInterval(ttmActiveInterval);
+  switch (payload.settings.ptt) {
+    // Sending PTM hotkey
+    case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
-          payload: { button: "ptm", state: true },
+          payload: {
+            button: "ptm",
+            state: false,
+          },
         })
       );
-      $SD.setState(context, false);
-    }
+      $SD.setState(context, true);
+      // Sending TTM hotkey
+      break;
+    case 2:
+      $SD.setState(context, true);
   }
 });
 
@@ -684,40 +635,33 @@ ptm.onKeyUp(({ action, context, device, event, payload }) => {
     $SD.showAlert(context);
     return;
   }
-  // Sending PTM hotkey
-  if (payload.settings.pushtotalk === "on") {
-    TeamSpeakWebsocket.send(
-      JSON.stringify({
-        type: "buttonPress",
-        payload: { button: "ptm", state: true },
-      })
-    );
-    ttmActive == false;
-    clearInterval(ttmActiveInterval);
-    $SD.setState(context, false);
-    // Sending TTM hotkey
-  } else {
-    if (ttmActive) {
-      ttmActive = false;
-      return;
-    } else {
-      ttmActive = true;
+  switch (payload.settings.ptt) {
+    // Sending PTM hotkey
+    case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
-          payload: { button: "ptm", state: false },
+          payload: {
+            button: "ptm",
+            state: true,
+          },
         })
       );
-      ttmActiveInterval = setInterval(() => {
-        TeamSpeakWebsocket.send(
-          JSON.stringify({
-            type: "buttonPress",
-            payload: { button: "ptm", state: false },
-          })
-        );
-      }, 500);
-      $SD.setState(context, true);
-    }
+      $SD.setState(context, false);
+      break;
+    // Sending TTM hotkey
+    case 2:
+      TeamSpeakWebsocket.send(
+        JSON.stringify({
+          type: "buttonPress",
+          payload: {
+            button: "ptm",
+            state: ttmActive,
+          },
+        })
+      );
+      ttmActive = !ttmActive;
+      $SD.setState(context, ttmActive);
   }
 });
 
@@ -727,37 +671,29 @@ ptm.onKeyUp(({ action, context, device, event, payload }) => {
 
 const ptt = new Action("de.leonmarcel.teamspeak5.pttaction");
 let tttActive = false;
-let tttActiveInterval;
 
 ptt.onKeyDown(({ action, context, device, event, payload }) => {
   if (!TeamSpeakIsConnected) {
     $SD.showAlert(context);
     return;
   }
-  // Sending PTT hotkey
-  if (payload.settings.pushtotalk === "on") {
-    TeamSpeakWebsocket.send(
-      JSON.stringify({
-        type: "buttonPress",
-        payload: { button: "ptt", state: false },
-      })
-    );
-    $SD.setState(context, true);
-    // Sending TTT hotkey
-  } else {
-    if (tttActive == false) {
-      return;
-    } else {
-      tttActive == false;
-      clearInterval(tttActiveInterval);
+  switch (payload.settings.ptt) {
+    // Sending PTT hotkey
+    case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
-          payload: { button: "ptt", state: true },
+          payload: {
+            button: "ptt",
+            state: false,
+          },
         })
       );
-      $SD.setState(context, false);
-    }
+      $SD.setState(context, true);
+      // Sending TTT hotkey
+      break;
+    case 2:
+      $SD.setState(context, true);
   }
 });
 
@@ -766,40 +702,33 @@ ptt.onKeyUp(({ action, context, device, event, payload }) => {
     $SD.showAlert(context);
     return;
   }
-  // Sending PTT hotkey
-  if (payload.settings.pushtotalk === "on") {
-    TeamSpeakWebsocket.send(
-      JSON.stringify({
-        type: "buttonPress",
-        payload: { button: "ptt", state: true },
-      })
-    );
-    tttActive == false;
-    clearInterval(tttActiveInterval);
-    $SD.setState(context, false);
-    // Sending TTT hotkey
-  } else {
-    if (tttActive) {
-      tttActive = false;
-      return;
-    } else {
-      tttActive = true;
+  switch (payload.settings.ptt) {
+    // Sending PTT hotkey
+    case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
-          payload: { button: "ptt", state: false },
+          payload: {
+            button: "ptt",
+            state: true,
+          },
         })
       );
-      tttActiveInterval = setInterval(() => {
-        TeamSpeakWebsocket.send(
-          JSON.stringify({
-            type: "buttonPress",
-            payload: { button: "ptt", state: false },
-          })
-        );
-      }, 500);
-      $SD.setState(context, true);
-    }
+      $SD.setState(context, false);
+      break;
+    // Sending TTT hotkey
+    case 2:
+      TeamSpeakWebsocket.send(
+        JSON.stringify({
+          type: "buttonPress",
+          payload: {
+            button: "ptt",
+            state: tttActive,
+          },
+        })
+      );
+      tttActive = !tttActive;
+      $SD.setState(context, tttActive);
   }
 });
 
@@ -818,33 +747,37 @@ generateMultiAvatarImage = async (urls, n) => {
 
   canvas_size = 144;
   canvas_center = canvas_size / 2;
-  circle_radius = canvas_size / 6 * 1.05;
-  single_offset = circle_radius / 3 * 2;
-  double_offset = circle_radius / 3 * 5;
+  circle_radius = (canvas_size / 6) * 1.05;
+  single_offset = (circle_radius / 3) * 2;
+  double_offset = (circle_radius / 3) * 5;
   line_shift = canvas_size * 0.05;
 
   // create a list of images and their positions
   images = [];
   for (var i = 0; i < urls.length; i++) {
     // position describes the center of the image
-    y = canvas_center + (urls.length > 3) * (i < 3 ? (- single_offset) : single_offset);
+    y =
+      canvas_center +
+      (urls.length > 3) * (i < 3 ? -single_offset : single_offset);
     x = canvas_center;
     switch (urls.length) {
       case 1:
         break;
       case 2:
-        x += i == 0 ? (- single_offset) : single_offset;
+        x += i == 0 ? -single_offset : single_offset;
         break;
       case 3:
-        x += i == 0 ? (- double_offset) : ((i == 1) ? 0 : double_offset);
+        x += i == 0 ? -double_offset : i == 1 ? 0 : double_offset;
         break;
-      case 4: case 5: case 6:
-        x += (i % 3) == 0 ? (- double_offset) : ((i % 3) == 1 ? 0 : double_offset);
-        x += i < 3 ? - line_shift : i < 6 ? 0 : line_shift;
+      case 4:
+      case 5:
+      case 6:
+        x += i % 3 == 0 ? -double_offset : i % 3 == 1 ? 0 : double_offset;
+        x += i < 3 ? -line_shift : i < 6 ? 0 : line_shift;
         break;
     }
 
-    url = urls[i] || 'assets/overlay/default_profilepicture.png';
+    url = urls[i] || "assets/overlay/default_profilepicture.png";
     image = new Image();
     image.src = url;
     await image.onload;
@@ -856,15 +789,15 @@ generateMultiAvatarImage = async (urls, n) => {
   }
 
   // create a canvas
-  canvas = document.createElement('CANVAS');
-  ctx = canvas.getContext('2d');
+  canvas = document.createElement("CANVAS");
+  ctx = canvas.getContext("2d");
 
   canvas.height = canvas_size;
   canvas.width = canvas_size;
 
   // draw background from assets/overlay/overlay_blank.png
   bkgrd_image = new Image();
-  bkgrd_image.src = 'assets/overlay/overlay_blank.png';
+  bkgrd_image.src = "assets/overlay/overlay_blank.png";
   await bkgrd_image.onload;
   ctx.drawImage(bkgrd_image, 0, 0, canvas_size, canvas_size);
 
@@ -880,7 +813,7 @@ generateMultiAvatarImage = async (urls, n) => {
 
     // draw gradient
     pp_bkgrd_image = new Image();
-    pp_bkgrd_image.src = 'assets/overlay/default_gradient.png';
+    pp_bkgrd_image.src = "assets/overlay/default_gradient.png";
     await pp_bkgrd_image.onload;
     x = images[i].x - circle_radius;
     y = images[i].y - circle_radius;
@@ -895,12 +828,12 @@ generateMultiAvatarImage = async (urls, n) => {
   }
 
   // draw number in top left corner with an offset of 10px
-  ctx.fillStyle = '#fff';
-  ctx.font = 'bold 24px Arial';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 24px Arial";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
   // offset is 10px
   ctx.fillText(n, 10, 10);
 
   return canvas.toDataURL();
-}
+};
