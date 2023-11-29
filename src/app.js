@@ -5,29 +5,32 @@
 let TeamSpeakWebsocket;
 let TeamSpeakInitialized = false;
 let TeamSpeakIsConnected = false; // TeamSpeak socket status
-let userarray = []; // Array to store all users in the current channel
-let talkingurls = [];
 
+// Elgato context ids of buttons
 let afkContexts = []; // Stores all context ids of afk buttons
 let micMuteContexts = []; // Stores all context ids of mute buttons
 let outputMuteContexts = []; // Stores all context ids of output buttons
 let overlayContexts = []; // Stores all context ids of overlay buttons
 
-// Elgato stuff
+// Elgato button registration / button logic
 const micMute = new Action("de.leonmarcel.teamspeak5.muteaction");
 const soundMute = new Action("de.leonmarcel.teamspeak5.soundmuteaction");
 const afk = new Action("de.leonmarcel.teamspeak5.afkaction");
 const overlaybtn = new Action("de.leonmarcel.teamspeak5.overlay");
 const lWhisper = new Action("de.leonmarcel.teamspeak5.lwhisperaction");
-let ttlwActive = false;
 const qWhisper = new Action("de.leonmarcel.teamspeak5.qwhisperaction");
-let ttqwActive = false;
 const rWhisper = new Action("de.leonmarcel.teamspeak5.rwhisperaction");
-let ttrwActive = false;
 const ptm = new Action("de.leonmarcel.teamspeak5.ptmaction");
-let ttmActive = false;
 const ptt = new Action("de.leonmarcel.teamspeak5.pttaction");
+let ttlwActive = false;
+let ttqwActive = false;
+let ttrwActive = false;
+let ttmActive = false;
 let tttActive = false;
+
+// Overlay lists
+let userarray = []; // Array to store all users in the current channel
+let talkingurls = []; // Links of myts avatars that are talking
 
 // Reconnect methode if a disconnect happens
 const reconnectTeamSpeak = async (apiKey) => {
@@ -114,7 +117,7 @@ const createTeamSpeakSocket = (apiKey) => {
       }
       // -> split into away
       if (data.payload.flag === "away") {
-        awayContexts.forEach((context) => {
+        afkContexts.forEach((context) => {
           $SD.setState(context, data.payload.newValue);
         });
       }
@@ -196,9 +199,6 @@ const createTeamSpeakSocket = (apiKey) => {
 // Saving the APIKey from TeamSpeak into the Elgato settings database
 $SD.on("didReceiveGlobalSettings", ({ event, payload }) => {
   console.log("Stream Deck -- Settings received: ");
-  let settings;
-
-  settings = payload.settings;
   console.log(payload);
 
   if (!TeamSpeakInitialized) {
@@ -233,20 +233,20 @@ micMute.onWillDisappear(({ context }) => {
 
 // Update Sound
 soundMute.onWillAppear(({ context }) => {
-  soundMuteContexts.push(context);
+  outputMuteContexts.push(context);
 });
 
 soundMute.onWillDisappear(({ context }) => {
-  soundMuteContexts = soundMuteContexts.filter((x) => x != context);
+  outputMuteContexts = outputMuteContexts.filter((x) => x != context);
 });
 
 // Update AFK
 afk.onWillAppear(({ context }) => {
-  awayContexts.push(context);
+  afkContexts.push(context);
 });
 
 afk.onWillDisappear(({ context }) => {
-  awayContexts = awayContexts.filter((x) => x != context);
+  afkContexts = afkContexts.filter((x) => x != context);
 });
 
 // Update Overlay
