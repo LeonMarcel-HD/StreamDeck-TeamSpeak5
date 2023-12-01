@@ -33,13 +33,13 @@ let userarray = []; // Array to store all users in the current channel
 let talkingurls = []; // Links of myts avatars that are talking
 
 // Reconnect methode if a disconnect happens
-const reconnectTeamSpeak = async (codeapiKey) => {
+const reconnectTeamSpeak = async (apiKey) => {
   await new Promise((r) => setTimeout(r, 5000));
-  createTeamSpeakSocket(codeapiKey);
+  createTeamSpeakSocket(apiKey);
   console.log("TeamSpeak -- Trying to reconnect: ");
 };
 
-const createTeamSpeakSocket = (codeapiKey) => {
+const createTeamSpeakSocket = (apiKey) => {
   // Opening a new websocket on 127.0.0.1 with default port 5899 (TeamSpeak Remote Apps)
   if (!TeamSpeakIsConnected) {
     TeamSpeakWebsocket = new WebSocket("ws://127.0.0.1:5899");
@@ -56,29 +56,33 @@ const createTeamSpeakSocket = (codeapiKey) => {
             description:
               "Stream Deck Plugin to send Hotkeys to TeamSpeak | @LeonMarcelHD",
             content: {
-              apiKey: codeapiKey,
+              apiKey: apiKey,
             },
           },
         })
       );
     };
+  } else {
+    return;
   }
 
   // Listening on messages coming from the websocket
   TeamSpeakWebsocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     let settings;
+    console.log(data);
     if (data.status && data.status.code !== 0) {
       console.log("TeamSpeak -- Error: ");
       console.log(data.status.message);
       TeamSpeakIsConnected = false;
       return;
     }
+    console.log(data);
     // Handle auth events
     if (data.type === "auth") {
       console.log("TeamSpeak -- Auth: ");
       TeamSpeakIsConnected = true;
-      settings.apiKey = data.payload.codeapiKey;
+      settings.apiKey = data.payload.apiKey;
       settings.connectionStatus = TeamSpeakIsConnected;
       $SD.setGlobalSettings(settings);
 
@@ -168,7 +172,7 @@ const createTeamSpeakSocket = (codeapiKey) => {
           data.payload.properties.myteamspeakAvatar;
       }
     } else {
-      console.log(data);
+      // console.log(data);
     }
   };
 
