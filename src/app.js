@@ -27,6 +27,7 @@ let ttqwActive = false;
 let ttrwActive = false;
 let ttmActive = false;
 let tttActive = false;
+let settings;
 
 // Overlay lists
 let userarray = []; // Array to store all users in the current channel
@@ -62,12 +63,13 @@ const createTeamSpeakSocket = (codeapiKey) => {
         })
       );
     };
+  } else {
+    return;
   }
 
   // Listening on messages coming from the websocket
   TeamSpeakWebsocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    let settings;
     if (data.status && data.status.code !== 0) {
       console.log("TeamSpeak -- Error: ");
       console.log(data.status.message);
@@ -168,14 +170,13 @@ const createTeamSpeakSocket = (codeapiKey) => {
           data.payload.properties.myteamspeakAvatar;
       }
     } else {
-      console.log(data);
+      console.log(data.payload);
     }
   };
 
   // Error handling if connection could not be opend
   TeamSpeakWebsocket.onerror = (err) => {
     console.log("TeamSpeak -- Error: ", err);
-    let settings;
     TeamSpeakIsConnected = false;
     settings.connectionStatus = TeamSpeakIsConnected;
     $SD.setGlobalSettings(settings);
@@ -184,7 +185,6 @@ const createTeamSpeakSocket = (codeapiKey) => {
   // Reconnect if the connection is closed
   TeamSpeakWebsocket.onclose = (event) => {
     console.log("TeamSpeak -- Disconnected: ");
-    let settings;
     TeamSpeakIsConnected = false;
     settings.connectionStatus = TeamSpeakIsConnected;
     $SD.setGlobalSettings(settings);
@@ -195,6 +195,7 @@ const createTeamSpeakSocket = (codeapiKey) => {
 // Saving the APIKey from TeamSpeak into the Elgato settings database
 $SD.on("didReceiveGlobalSettings", ({ event, payload }) => {
   console.log("Stream Deck -- Settings received: ");
+  settings = payload.settings;
   console.log(payload);
 
   if (!TeamSpeakInitialized) {
