@@ -70,6 +70,7 @@ const createTeamSpeakSocket = (codeapiKey) => {
   // Listening on messages coming from the websocket
   TeamSpeakWebsocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
+    console.log(data.payload); //TODO REMOVE BEFORE SHIP
     if (data.status && data.status.code !== 0) {
       console.log("TeamSpeak -- Error: ");
       console.log(data.status.message);
@@ -153,7 +154,7 @@ const createTeamSpeakSocket = (codeapiKey) => {
         return value[2];
       });
       // TODO: count total number of users in channel to display it in the top left corner
-      generateMultiAvatarImage(urls, "6").then((dataUrl) => {
+      generateMultiAvatarImage(urls, talkingurls.length).then((dataUrl) => {
         overlayContexts.forEach((context) => {
           $SD.setImage(context, dataUrl);
         });
@@ -169,8 +170,6 @@ const createTeamSpeakSocket = (codeapiKey) => {
         userarray[String(data.payload.clientId)]["avatar"] =
           data.payload.properties.myteamspeakAvatar;
       }
-    } else {
-      console.log(data.payload);
     }
   };
 
@@ -188,7 +187,7 @@ const createTeamSpeakSocket = (codeapiKey) => {
     TeamSpeakIsConnected = false;
     settings.connectionStatus = TeamSpeakIsConnected;
     $SD.setGlobalSettings(settings);
-    reconnectTeamSpeak(apiKey);
+    reconnectTeamSpeak(codeapiKey);
   };
 };
 
