@@ -63,14 +63,17 @@ document.getElementById("rdio2").addEventListener("click", () => {
   $PI.setSettings(settings);
 });
 
-document.getElementById("open-setup").addEventListener("click", () => {
-  switch (currentLanguage) {
-    case "de":
-      window.open("setupde.html");
-      break;
-    case "en":
-    default:
-      window.open("setupen.html");
-      break;
+document.addEventListener("click", (event) => {
+  const targetId = event.target.id;
+  if (targetId === "open-setup" || targetId === "open-help") {
+    switch (currentLanguage) {
+      case "de":
+        window.open("setupde.html");
+        break;
+      case "en":
+      default:
+        window.open("setupen.html");
+        break;
+    }
   }
 });
