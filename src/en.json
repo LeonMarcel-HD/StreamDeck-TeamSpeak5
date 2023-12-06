@@ -47,8 +47,12 @@
     "noconnnection.setup": "Setup",
     "noconnnection.openguide": "Open Setup Guide",
 
+    "connection.teamspeak": "TeamSpeak Connected!",
+
     "overlay.allserver": "All Active Talker",
     "overlay.talkingserver": "Server you are Talking on",
-    "overlay.visibleserver": "Server you see in TeamSpeak"
+    "overlay.visibleserver": "Server you see in TeamSpeak",
+
+    "help.openguide": "Something isn't working?"
   }
 }

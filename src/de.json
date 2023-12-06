@@ -45,10 +45,14 @@
 
     "noconnnection.noremoteapps": "Es konnte keine Verbindung zur TeamSpeak Remote App hergestellt werden",
     "noconnnection.setup": "Einrichtung",
-    "noconnnection.openguide": "Anleitung zur Einrichtung öffnen",
+    "noconnnection.openguide": "Einrichtungsanleitung öffnen",
+    
+    "connection.teamspeak": "TeamSpeak Verbunden!",
 
     "overlay.allserver": "Alle aktiven Sprecher",
     "overlay.talkingserver": "Server auf dem du sprichst",
-    "overlay.visibleserver": "Server den du in TeamSpeak siehst"
+    "overlay.visibleserver": "Server den du in TeamSpeak siehst",
+
+    "help.openguide": "Etwas funktioniert nicht?"
   }
 }
