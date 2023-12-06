@@ -11,6 +11,11 @@
         font-size: 13pt;
       }
     </style>
+    <script src="../libs/js/constants.js"></script>
+    <script src="../libs/js/events.js"></script>
+    <script src="../libs/js/api.js"></script>
+    <script src="../libs/js/property-inspector.js"></script>
+    <script src="../libs/js/dynamic-styles.js"></script>
   </head>
   <body>
     <h1>Einrichtungsanleitung</h1>
@@ -65,13 +70,68 @@
       dann drücke den Knopf auf dem Stream Deck und wähle die Whisperliste auf
       der linken Seite neben der Tastenbelegung aus.
     </p>
+
     <h2>Fehlerbehebung</h2>
     <p>
-      Solltest du irgendwelche Probleme / Fehler während der Installation oder
-      bei der nutzung des Plugins auffallen, bitte ich dich sie auf meiner
-      GitHub Seite zu melden.
+      Solltest du Probleme bei der Installation haben, dann findest du auf der
+      Diskussions Seite hilfe.
+      <a
+        onclick="copyToClipboard('https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/discussions/categories/q-a-help')"
+        ><strong>Link in Zwischenablage kopieren</strong></a
+      >
     </p>
+    <p>
+      Solltest du Bugs und Fehler kannst du die gerne auf der Issues Seite des
+      Repositories melden.
+      <a
+        onclick="copyToClipboard('https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/issues')"
+        ><strong>Link in Zwischenablage kopieren</strong></a
+      >
+    </p>
+    <p>
+      Um Feature vorzuschlagen, poste diese gerne auf der korrespondierenden
+      Discussions Seite.
+      <a
+        onclick="copyToClipboard('https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/discussions/categories/feature-requests-suggestions')"
+        ><strong>Link in Zwischenablage kopieren</strong></a
+      >
+    </p>
+
     <p>Danke fürs Installieren des Plugin <3</p>
     <p><strong>_________</strong></p>
+
+    <dialog
+      id="copyDialog"
+      style="
+        font-size: 24px;
+        color: #9a9a9a;
+        background-color: #282828;
+        border-radius: 10px;
+        border-color: #585858;
+        text-align: center;
+      "
+    >
+      <p>Link in Zwischenablage Kopiert!</p>
+    </dialog>
   </body>
+  <script>
+    function copyToClipboard(urlToCopy) {
+      var tempInput = document.createElement("input");
+      tempInput.value = urlToCopy;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      var copyDialog = document.getElementById("copyDialog");
+      copyDialog.showModal();
+      setTimeout(() => {
+        closeDialog();
+      }, 2500);
+    }
+
+    function closeDialog() {
+      var copyDialog = document.getElementById("copyDialog");
+      copyDialog.close();
+    }
+  </script>
 </html>

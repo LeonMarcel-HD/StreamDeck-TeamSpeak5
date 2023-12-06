@@ -62,12 +62,68 @@
       Button on the Stream Deck and select the Whisperlist on the left side
       beside the Keybinding.
     </p>
+
     <h2>Troubleshooting</h2>
     <p>
-      If you encounter any issues / bugs during the setup process or while using
-      the plugin, report them on the GitHub Page.
+      If you have problems with the installation, you can find help on the
+      discussion page for help.
+      <a
+        onclick="copyToClipboard('https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/discussions/categories/q-a-help')"
+        ><strong>Copy link to clipboard</strong></a
+      >
     </p>
+    <p>
+      If you find any bugs or errors, you can report them on the issues page of
+      the repository.
+      <a
+        onclick="copyToClipboard('https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/issues')"
+        ><strong>Copy link to clipboard</strong></a
+      >
+    </p>
+    <p>
+      To suggest features, please post them on the corresponding Discussions
+      page.
+      <a
+        onclick="copyToClipboard('https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/discussions/categories/feature-requests-suggestions')"
+        ><strong>Copy link to clipboard</strong></a
+      >
+    </p>
+
     <p>Thanks for installing the Plugin <3</p>
     <p><strong>_________</strong></p>
+
+    <dialog
+      id="copyDialog"
+      style="
+        font-size: 24px;
+        color: #9a9a9a;
+        background-color: #282828;
+        border-radius: 10px;
+        border-color: #585858;
+        text-align: center;
+      "
+    >
+      <p>Link copied to clipboard!</p>
+    </dialog>
   </body>
+  <script>
+    function copyToClipboard(urlToCopy) {
+      var tempInput = document.createElement("input");
+      tempInput.value = urlToCopy;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      var copyDialog = document.getElementById("copyDialog");
+      copyDialog.showModal();
+      setTimeout(() => {
+        closeDialog();
+      }, 2500);
+    }
+
+    function closeDialog() {
+      var copyDialog = document.getElementById("copyDialog");
+      copyDialog.close();
+    }
+  </script>
 </html>
