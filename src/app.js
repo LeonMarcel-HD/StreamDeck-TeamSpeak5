@@ -54,8 +54,8 @@ $SD.on("didReceiveGlobalSettings", ({ event, payload }) => {
 // Reconnect methode if a disconnect happens
 const reconnectTeamSpeak = async () => {
   await new Promise((r) => setTimeout(r, 5000));
-  createTeamSpeakSocket();
   console.log("TeamSpeak -- Trying to reconnect: ");
+  createTeamSpeakSocket();
 };
 
 const createTeamSpeakSocket = () => {
@@ -88,7 +88,7 @@ const createTeamSpeakSocket = () => {
   // Listening on messages coming from the websocket
   TeamSpeakWebsocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    console.log(data.payload); //TODO REMOVE BEFORE SHIP
+    // console.log(data.payload);
     if (data.status && data.status.code !== 0) {
       console.log("TeamSpeak -- Error: ");
       console.log(data.status.message);
