@@ -70,7 +70,7 @@ const createTeamSpeakSocket = () => {
           type: "auth",
           payload: {
             identifier: "de.leonmarcel.streamdeckplugin",
-            version: "1.0.0",
+            version: "1.1.0",
             name: "Stream Deck Plugin",
             description:
               "Stream Deck Plugin to send Hotkeys to TeamSpeak | @LeonMarcelHD",
