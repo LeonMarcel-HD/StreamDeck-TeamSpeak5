@@ -3,7 +3,6 @@
 
 // TeamSpeak stuff
 let TeamSpeakWebsocket;
-let TeamSpeakInitialized = false;
 let TeamSpeakIsConnected = false; // TeamSpeak socket status
 
 // Elgato context ids of buttons
@@ -33,14 +32,33 @@ let settings;
 let userarray = []; // Array to store all users in the current channel
 let talkingurls = []; // Links of myts avatars that are talking
 
+// The first event when Stream Deck starts
+// Getting global settings and sending to to PI for them to use
+$SD.onConnected(
+  ({ actionInfo, appInfo, connection, messageType, port, uuid }) => {
+    $SD.getGlobalSettings(uuid);
+    $SD.sendToPropertyInspector(uuid);
+
+    console.log("Stream Deck -- Connected: ");
+  }
+);
+
+// Saving the APIKey from TeamSpeak into the Elgato settings database
+$SD.on("didReceiveGlobalSettings", ({ event, payload }) => {
+  console.log("Stream Deck -- Settings received: ");
+  settings = payload.settings;
+  console.log(payload);
+  createTeamSpeakSocket();
+});
+
 // Reconnect methode if a disconnect happens
-const reconnectTeamSpeak = async (codeapiKey) => {
+const reconnectTeamSpeak = async () => {
   await new Promise((r) => setTimeout(r, 5000));
-  createTeamSpeakSocket(codeapiKey);
+  createTeamSpeakSocket();
   console.log("TeamSpeak -- Trying to reconnect: ");
 };
 
-const createTeamSpeakSocket = (codeapiKey) => {
+const createTeamSpeakSocket = () => {
   // Opening a new websocket on 127.0.0.1 with default port 5899 (TeamSpeak Remote Apps)
   if (!TeamSpeakIsConnected) {
     TeamSpeakWebsocket = new WebSocket("ws://127.0.0.1:5899");
@@ -57,7 +75,7 @@ const createTeamSpeakSocket = (codeapiKey) => {
             description:
               "Stream Deck Plugin to send Hotkeys to TeamSpeak | @LeonMarcelHD",
             content: {
-              apiKey: codeapiKey,
+              apiKey: settings.apiKey || "",
             },
           },
         })
@@ -183,36 +201,13 @@ const createTeamSpeakSocket = (codeapiKey) => {
 
   // Reconnect if the connection is closed
   TeamSpeakWebsocket.onclose = (event) => {
-    console.log("TeamSpeak -- Disconnected: ");
+    console.log("TeamSpeak -- Disconnected: "); //TODO remove users from overlay when closing client
     TeamSpeakIsConnected = false;
     settings.connectionStatus = TeamSpeakIsConnected;
     $SD.setGlobalSettings(settings);
-    reconnectTeamSpeak(codeapiKey);
+    reconnectTeamSpeak();
   };
 };
-
-// Saving the APIKey from TeamSpeak into the Elgato settings database
-$SD.on("didReceiveGlobalSettings", ({ event, payload }) => {
-  console.log("Stream Deck -- Settings received: ");
-  settings = payload.settings;
-  console.log(payload);
-
-  if (!TeamSpeakInitialized) {
-    createTeamSpeakSocket(payload.settings?.apiKey || "");
-    TeamSpeakInitialized = true;
-  }
-});
-
-// The first event when Stream Deck starts
-// Getting global settings and sending to to PI for them to use
-$SD.onConnected(
-  ({ actionInfo, appInfo, connection, messageType, port, uuid }) => {
-    $SD.getGlobalSettings(uuid);
-    $SD.sendToPropertyInspector(uuid);
-
-    console.log("Stream Deck -- Connected: ");
-  }
-);
 
 // ----------------------------------------------------
 // |            UPDATE STREAM DECK ICONS              |
