@@ -22,7 +22,7 @@ jobs:
           New-Item -ItemType Directory -Path "release"
 
       - name: StreamDeck Distribution Tool
-        uses: AdamCarballo/streamdeck-distribution-tool@v1
+        uses: AdamCarballo/streamdeck-distribution-tool@v1.0.1
         with:
           input: de.leonmarcel.teamspeak5.sdPlugin
           output: release
