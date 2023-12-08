@@ -52,6 +52,7 @@
     "noconnnection.openguide": "Open Setup Guide",
 
     "connection.port": "Remote App Port",
+    "connection.port.placeholder": "Default 5899 | 1025-65535",
     "connection.teamspeak": "TeamSpeak Connected!",
 
     "overlay.allserver": "All Active Talker",
