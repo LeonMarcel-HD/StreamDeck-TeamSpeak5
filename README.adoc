@@ -31,9 +31,6 @@ press the Button on the Stream Deck. You need to repeat this for every
 other Key, as TeamSpeak currently does not offer a way to set up the
 Bindings automatically!
 
-After setting all Keybindings, you are read to talk (or not if you are
-muted)!
-
 === Configuration of Whisperlists
 
 Create a Whisperlist in TeamSpeak
