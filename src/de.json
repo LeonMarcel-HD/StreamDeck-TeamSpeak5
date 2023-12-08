@@ -35,7 +35,7 @@
     "Tooltip": "Aktiviere, um zu sprechen"
   },
   "de.leonmarcel.teamspeak5.overlay": {
-    "Name": "Overlay [In Arbeit]", 
+    "Name": "Overlay", 
     "Tooltip": "Sehe aktuell sprechende Nutzer"
   },
   "Localization": {
@@ -51,6 +51,7 @@
     "noconnnection.setup": "Einrichtung",
     "noconnnection.openguide": "Einrichtungsanleitung öffnen",
     
+    "connection.port": "Remote App Port",
     "connection.teamspeak": "TeamSpeak Verbunden!",
 
     "overlay.allserver": "Alle aktiven Sprecher",

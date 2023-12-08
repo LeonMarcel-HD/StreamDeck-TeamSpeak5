@@ -4,6 +4,12 @@
     <meta charset="utf-8" />
     <title>TeamSpeak 5 -- PTT Property Inspector</title>
     <link rel="stylesheet" href="../libs/css/sdpi.css" />
+    <style>
+      #port:invalid {
+        border: 1px solid red;
+        box-sizing: border-box;
+      }
+    </style>
   </head>
 
   <body>
@@ -65,6 +71,18 @@
             help.openguide
           </button>
         </div>
+      </div>
+      <div class="sdpi-item">
+        <div class="sdpi-item-label" data-localize>connection.port</div>
+        <input
+          class="sdpi-item-value port"
+          placeholder="connection.port"
+          id="port"
+          inputmode="numeric"
+          min="1025"
+          max="65535"
+          type="number"
+        />
       </div>
     </div>
 

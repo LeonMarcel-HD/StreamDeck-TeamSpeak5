@@ -2,46 +2,60 @@
 /// <reference path="../libs/js/utils.js" />
 /// <reference path="../libs/js/stream-deck.js" />
 
-let teamspeakWebSocketConnectionStatus = false;
 let currentLanguage;
+let globalsettings;
 let settings;
 
 $PI.onConnected((jsn) => {
   $PI.getGlobalSettings();
   settings = jsn.actionInfo.payload.settings;
-  console.log("Current PTT Settings: ", settings);
-  console.log("Current ActionInfo Settings: ", jsn.actionInfo);
   currentLanguage = jsn.appInfo.application.language;
 });
 
 $PI.onDidReceiveGlobalSettings(({ payload }) => {
   console.log("onDidReceiveGlobalSettings", payload);
-  teamspeakWebSocketConnectionStatus = payload.settings.connectionStatus;
+  globalsettings = payload.settings;
+
+  // Restoring previously setted settings
+  document.getElementById("port").value = globalsettings.port;
+
+  switch (settings.ptt) {
+    case 1:
+      document.getElementById("rdio1").checked = true;
+      break;
+    case 2:
+      document.getElementById("rdio2").checked = true;
+      break;
+    default:
+      console.warn("No settings found, setting to default");
+      document.getElementById("rdio1").checked = true;
+      $PI.setSettings({ ptt: 1 });
+  }
+
   var layout1 = document.getElementById("sdpi-layout1");
   var layout2 = document.getElementById("sdpi-layout2");
 
-  if (!teamspeakWebSocketConnectionStatus) {
-    // If TS is NOT connected show Setup process
+  if (!payload.settings.connectionStatus) {
     layout1.style.display = "block";
     layout2.style.display = "none";
   } else {
-    // If TS is connected show settings
     layout1.style.display = "none";
     layout2.style.display = "block";
-    // Restoring previously setted settings
-    switch (settings.ptt) {
-      case 1:
-        document.getElementById("rdio1").checked = true;
-        break;
-      case 2:
-        document.getElementById("rdio2").checked = true;
-        break;
-      default:
-        console.warn("No settings found, setting to default");
-        document.getElementById("rdio1").checked = true;
-        $PI.setSettings({ ptt: 1 });
-    }
   }
+});
+
+// Port
+document.getElementById("port").addEventListener("change", (event) => {
+  const minPort = 1025;
+  const maxPort = 65535;
+
+  globalsettings = {
+    ...globalsettings,
+    port: Math.min(Math.max(event.target.value, minPort), maxPort),
+  };
+
+  document.getElementById("port").value = globalsettings.port;
+  $PI.setGlobalSettings(globalsettings);
 });
 
 // Push To Talk

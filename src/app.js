@@ -47,6 +47,14 @@ $SD.onConnected(
 $SD.on("didReceiveGlobalSettings", ({ event, payload }) => {
   console.log("Stream Deck -- Settings received: ");
   settings = payload.settings;
+
+  if (!(settings.port && !isNaN(settings.port))) {
+    console.warn("Falling back to default port");
+    settings.port = 5899;
+  }
+
+  $SD.setGlobalSettings(settings);
+
   console.log(payload);
   createTeamSpeakSocket();
 });
@@ -59,9 +67,8 @@ const reconnectTeamSpeak = async () => {
 };
 
 const createTeamSpeakSocket = () => {
-  // Opening a new websocket on 127.0.0.1 with default port 5899 (TeamSpeak Remote Apps)
   if (!TeamSpeakIsConnected) {
-    TeamSpeakWebsocket = new WebSocket("ws://127.0.0.1:5899");
+    TeamSpeakWebsocket = new WebSocket("ws://127.0.0.1:" + settings.port);
     TeamSpeakWebsocket.onopen = () => {
       TeamSpeakIsConnected = true;
       console.log("TeamSpeak -- Connecting: ");
@@ -70,7 +77,7 @@ const createTeamSpeakSocket = () => {
           type: "auth",
           payload: {
             identifier: "de.leonmarcel.streamdeckplugin",
-            version: "1.1.0",
+            version: "1.2.0",
             name: "Stream Deck Plugin",
             description:
               "Stream Deck Plugin to send Hotkeys to TeamSpeak | @LeonMarcelHD",
@@ -88,7 +95,7 @@ const createTeamSpeakSocket = () => {
   // Listening on messages coming from the websocket
   TeamSpeakWebsocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    // console.log(data.payload);
+    console.log(data.payload); //TODO REMOVE BEFORE SHIP
     if (data.status && data.status.code !== 0) {
       console.log("TeamSpeak -- Error: ");
       console.log(data.status.message);
@@ -194,17 +201,21 @@ const createTeamSpeakSocket = () => {
   // Error handling if connection could not be opend
   TeamSpeakWebsocket.onerror = (err) => {
     console.log("TeamSpeak -- Error: ", err);
-    TeamSpeakIsConnected = false;
-    settings.connectionStatus = TeamSpeakIsConnected;
-    $SD.setGlobalSettings(settings);
+    if (TeamSpeakIsConnected) {
+      TeamSpeakIsConnected = false;
+      settings.connectionStatus = TeamSpeakIsConnected;
+      $SD.setGlobalSettings(settings);
+    }
   };
 
   // Reconnect if the connection is closed
   TeamSpeakWebsocket.onclose = (event) => {
     console.log("TeamSpeak -- Disconnected: "); //TODO remove users from overlay when closing client
-    TeamSpeakIsConnected = false;
-    settings.connectionStatus = TeamSpeakIsConnected;
-    $SD.setGlobalSettings(settings);
+    if (TeamSpeakIsConnected) {
+      TeamSpeakIsConnected = false;
+      settings.connectionStatus = TeamSpeakIsConnected;
+      $SD.setGlobalSettings(settings);
+    }
     reconnectTeamSpeak();
   };
 };
