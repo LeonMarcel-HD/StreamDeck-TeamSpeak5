@@ -47,6 +47,7 @@ $SD.onConnected(
 $SD.on("didReceiveGlobalSettings", ({ event, payload }) => {
   console.log("Stream Deck -- Settings received: ");
   settings = payload.settings;
+  settings.connectionStatus = false;
 
   if (!(settings.port && !isNaN(settings.port))) {
     console.warn("Falling back to default port");
@@ -98,9 +99,12 @@ const createTeamSpeakSocket = () => {
     console.log(data.payload); //TODO REMOVE BEFORE SHIP
     if (data.status && data.status.code !== 0) {
       console.log("TeamSpeak -- Error: ");
-      console.log(data.status.message);
-      TeamSpeakIsConnected = false;
-      return;
+      if (TeamSpeakIsConnected) {
+        TeamSpeakIsConnected = false;
+        settings.connectionStatus = TeamSpeakIsConnected;
+        $SD.setGlobalSettings(settings);
+        return;
+      }
     }
     // Handle auth events
     if (data.type === "auth") {
