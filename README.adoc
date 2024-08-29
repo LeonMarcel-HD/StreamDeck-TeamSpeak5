@@ -1,6 +1,6 @@
 = Stream Deck Plugin for TeamSpeak 5
 
-image:https://img.shields.io/github/v/release/leonmarcel-hd/StreamDeck-TeamSpeak5?color=blue&label=Latest Version[link="https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/releases/latest"] 
+image:https://img.shields.io/github/v/release/leonmarcel-hd/StreamDeck-TeamSpeak5?color=blue&label=Latest Version[link="https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/releases/latest"]
 
 image::https://user-images.githubusercontent.com/83507548/242984540-5c6607ab-86c6-4f3c-8f85-b9343ef1ce7e.png[Header Image]
 
@@ -9,8 +9,7 @@ image::https://user-images.githubusercontent.com/83507548/242984540-5c6607ab-86c
 === Connecting TeamSpeak
     
 Launch TeamSpeak and head over to the **Settings** ->
-**Remote Apps**. Make sure that the Port is set to
-**5899**
+**Remote Apps**. Make sure that the Port matches.
 
 Now you should see a request sent by the Plugin, accept it.
 
@@ -42,12 +41,6 @@ Whisperlist Buttons if two buttons are named the same)
 Click on **Choose** to set the Keybinding, then press the
 Button on the Stream Deck and select the Whisperlist on the left side
 beside the Keybinding.
-    
-== Changelog (v1.0.0 - latest Version)
-
-Initial Release :partying_face:
-
-You can find the complete changelog in the https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/releases[**Releases**] section.
 
 == Features
 

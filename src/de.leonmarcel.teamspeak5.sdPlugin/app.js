@@ -96,7 +96,7 @@ const createTeamSpeakSocket = () => {
   // Listening on messages coming from the websocket
   TeamSpeakWebsocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    console.log(data.payload); //TODO REMOVE BEFORE SHIP
+    //console.log(data.payload); //TODO REMOVE BEFORE SHIP
     if (data.status && data.status.code !== 0) {
       console.log("TeamSpeak -- Error: ");
       if (TeamSpeakIsConnected) {
@@ -277,7 +277,7 @@ micMute.onKeyDown(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "mute", state: false },
+      payload: { button: "mute", state: true },
     })
   );
 });
@@ -290,7 +290,7 @@ micMute.onKeyUp(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "mute", state: true },
+      payload: { button: "mute", state: false },
     })
   );
 });
@@ -304,7 +304,7 @@ soundMute.onKeyDown(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "soundmute", state: false },
+      payload: { button: "soundmute", state: true },
     })
   );
 });
@@ -317,7 +317,7 @@ soundMute.onKeyUp(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "soundmute", state: true },
+      payload: { button: "soundmute", state: false },
     })
   );
 });
@@ -331,7 +331,7 @@ afk.onKeyDown(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "afk", state: false },
+      payload: { button: "afk", state: true },
     })
   );
 });
@@ -344,7 +344,7 @@ afk.onKeyUp(({ action, context, device, event, payload }) => {
   TeamSpeakWebsocket.send(
     JSON.stringify({
       type: "buttonPress",
-      payload: { button: "afk", state: true },
+      payload: { button: "afk", state: false },
     })
   );
 });
@@ -359,32 +359,7 @@ lWhisper.onKeyDown(({ action, context, device, event, payload }) => {
     return;
   }
   switch (payload.settings.ptt) {
-    // Sending PTLW hotkey
-    case 1:
-      TeamSpeakWebsocket.send(
-        JSON.stringify({
-          type: "buttonPress",
-          payload: {
-            button: payload.settings.input + ".lWhisper",
-            state: false,
-          },
-        })
-      );
-      $SD.setState(context, true);
-      // Sending TTLW hotkey
-      break;
-    case 2:
-      $SD.setState(context, true);
-  }
-});
-
-lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
-  if (!TeamSpeakIsConnected) {
-    $SD.showAlert(context);
-    return;
-  }
-  switch (payload.settings.ptt) {
-    // Sending PTLW hotkey
+    // Sending Push To Talk hotkey
     case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
@@ -395,21 +370,43 @@ lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
           },
         })
       );
-      $SD.setState(context, false);
+      $SD.setState(context, true);
       break;
-    // Sending TTLW hotkey
+    // Sending Toggle To ACTION hotkey
     case 2:
+      tttActive = !tttActive; // Stateflip during keydown
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
           payload: {
             button: payload.settings.input + ".lWhisper",
-            state: ttlwActive,
+            state: tttActive,
           },
         })
       );
-      ttlwActive = !ttlwActive;
-      $SD.setState(context, ttlwActive);
+      $SD.setState(context, tttActive);
+  }
+});
+
+lWhisper.onKeyUp(({ action, context, device, event, payload }) => {
+  if (!TeamSpeakIsConnected) {
+    $SD.showAlert(context);
+    return;
+  }
+  switch (payload.settings.ptt) {
+    // Sending Push To ACTION hotkey
+    case 1:
+      TeamSpeakWebsocket.send(
+        JSON.stringify({
+          type: "buttonPress",
+          payload: {
+            button: payload.settings.input + ".lWhisper",
+            state: false,
+          },
+        })
+      );
+      $SD.setState(context, false);
+      break;
   }
 });
 
@@ -423,32 +420,7 @@ qWhisper.onKeyDown(({ action, context, device, event, payload }) => {
     return;
   }
   switch (payload.settings.ptt) {
-    // Sending PTQW hotkey
-    case 1:
-      TeamSpeakWebsocket.send(
-        JSON.stringify({
-          type: "buttonPress",
-          payload: {
-            button: "qWhisper",
-            state: false,
-          },
-        })
-      );
-      $SD.setState(context, true);
-      // Sending TTQW hotkey
-      break;
-    case 2:
-      $SD.setState(context, true);
-  }
-});
-
-qWhisper.onKeyUp(({ action, context, device, event, payload }) => {
-  if (!TeamSpeakIsConnected) {
-    $SD.showAlert(context);
-    return;
-  }
-  switch (payload.settings.ptt) {
-    // Sending PTQW hotkey
+    // Sending Push To Talk hotkey
     case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
@@ -459,21 +431,43 @@ qWhisper.onKeyUp(({ action, context, device, event, payload }) => {
           },
         })
       );
-      $SD.setState(context, false);
+      $SD.setState(context, true);
       break;
-    // Sending TTQW hotkey
+    // Sending Toggle To ACTION hotkey
     case 2:
+      tttActive = !tttActive; // Stateflip during keydown
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
           payload: {
             button: "qWhisper",
-            state: ttqwActive,
+            state: tttActive,
           },
         })
       );
-      ttqwActive = !ttqwActive;
-      $SD.setState(context, ttqwActive);
+      $SD.setState(context, tttActive);
+  }
+});
+
+qWhisper.onKeyUp(({ action, context, device, event, payload }) => {
+  if (!TeamSpeakIsConnected) {
+    $SD.showAlert(context);
+    return;
+  }
+  switch (payload.settings.ptt) {
+    // Sending Push To ACTION hotkey
+    case 1:
+      TeamSpeakWebsocket.send(
+        JSON.stringify({
+          type: "buttonPress",
+          payload: {
+            button: "qWhisper",
+            state: false,
+          },
+        })
+      );
+      $SD.setState(context, false);
+      break;
   }
 });
 
@@ -487,22 +481,32 @@ rWhisper.onKeyDown(({ action, context, device, event, payload }) => {
     return;
   }
   switch (payload.settings.ptt) {
-    // Sending PTRW hotkey
+    // Sending Push To Talk hotkey
     case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
           payload: {
-            button: "rwhisper",
-            state: false,
+            button: "rWhisper",
+            state: true,
           },
         })
       );
       $SD.setState(context, true);
-      // Sending TTRW hotkey
       break;
+    // Sending Toggle To ACTION hotkey
     case 2:
-      $SD.setState(context, true);
+      tttActive = !tttActive; // Stateflip during keydown
+      TeamSpeakWebsocket.send(
+        JSON.stringify({
+          type: "buttonPress",
+          payload: {
+            button: "rWhisper",
+            state: tttActive,
+          },
+        })
+      );
+      $SD.setState(context, tttActive);
   }
 });
 
@@ -512,32 +516,19 @@ rWhisper.onKeyUp(({ action, context, device, event, payload }) => {
     return;
   }
   switch (payload.settings.ptt) {
-    // Sending PTRW hotkey
+    // Sending Push To ACTION hotkey
     case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
           payload: {
-            button: "rwhisper",
-            state: true,
+            button: "rWhisper",
+            state: false,
           },
         })
       );
       $SD.setState(context, false);
       break;
-    // Sending TTRW hotkey
-    case 2:
-      TeamSpeakWebsocket.send(
-        JSON.stringify({
-          type: "buttonPress",
-          payload: {
-            button: "rwhisper",
-            state: ttrwActive,
-          },
-        })
-      );
-      ttrwActive = !ttrwActive;
-      $SD.setState(context, ttrwActive);
   }
 });
 
@@ -551,32 +542,7 @@ ptm.onKeyDown(({ action, context, device, event, payload }) => {
     return;
   }
   switch (payload.settings.ptt) {
-    // Sending PTM hotkey
-    case 1:
-      TeamSpeakWebsocket.send(
-        JSON.stringify({
-          type: "buttonPress",
-          payload: {
-            button: "ptm",
-            state: false,
-          },
-        })
-      );
-      $SD.setState(context, true);
-      // Sending TTM hotkey
-      break;
-    case 2:
-      $SD.setState(context, true);
-  }
-});
-
-ptm.onKeyUp(({ action, context, device, event, payload }) => {
-  if (!TeamSpeakIsConnected) {
-    $SD.showAlert(context);
-    return;
-  }
-  switch (payload.settings.ptt) {
-    // Sending PTM hotkey
+    // Sending Push To Talk hotkey
     case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
@@ -587,21 +553,43 @@ ptm.onKeyUp(({ action, context, device, event, payload }) => {
           },
         })
       );
-      $SD.setState(context, false);
+      $SD.setState(context, true);
       break;
-    // Sending TTM hotkey
+    // Sending Toggle To ACTION hotkey
     case 2:
+      tttActive = !tttActive; // Stateflip during keydown
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
           payload: {
             button: "ptm",
-            state: ttmActive,
+            state: tttActive,
           },
         })
       );
-      ttmActive = !ttmActive;
-      $SD.setState(context, ttmActive);
+      $SD.setState(context, tttActive);
+  }
+});
+
+ptm.onKeyUp(({ action, context, device, event, payload }) => {
+  if (!TeamSpeakIsConnected) {
+    $SD.showAlert(context);
+    return;
+  }
+  switch (payload.settings.ptt) {
+    // Sending Push To ACTION hotkey
+    case 1:
+      TeamSpeakWebsocket.send(
+        JSON.stringify({
+          type: "buttonPress",
+          payload: {
+            button: "ptm",
+            state: false,
+          },
+        })
+      );
+      $SD.setState(context, false);
+      break;
   }
 });
 
@@ -615,32 +603,7 @@ ptt.onKeyDown(({ action, context, device, event, payload }) => {
     return;
   }
   switch (payload.settings.ptt) {
-    // Sending PTT hotkey
-    case 1:
-      TeamSpeakWebsocket.send(
-        JSON.stringify({
-          type: "buttonPress",
-          payload: {
-            button: "ptt",
-            state: false,
-          },
-        })
-      );
-      $SD.setState(context, true);
-      // Sending TTT hotkey
-      break;
-    case 2:
-      $SD.setState(context, true);
-  }
-});
-
-ptt.onKeyUp(({ action, context, device, event, payload }) => {
-  if (!TeamSpeakIsConnected) {
-    $SD.showAlert(context);
-    return;
-  }
-  switch (payload.settings.ptt) {
-    // Sending PTT hotkey
+    // Sending Push To Talk hotkey
     case 1:
       TeamSpeakWebsocket.send(
         JSON.stringify({
@@ -651,10 +614,11 @@ ptt.onKeyUp(({ action, context, device, event, payload }) => {
           },
         })
       );
-      $SD.setState(context, false);
+      $SD.setState(context, true);
       break;
-    // Sending TTT hotkey
+    // Sending Toggle To ACTION hotkey
     case 2:
+      tttActive = !tttActive; // Stateflip during keydown
       TeamSpeakWebsocket.send(
         JSON.stringify({
           type: "buttonPress",
@@ -664,8 +628,29 @@ ptt.onKeyUp(({ action, context, device, event, payload }) => {
           },
         })
       );
-      tttActive = !tttActive;
       $SD.setState(context, tttActive);
+  }
+});
+
+ptt.onKeyUp(({ action, context, device, event, payload }) => {
+  if (!TeamSpeakIsConnected) {
+    $SD.showAlert(context);
+    return;
+  }
+  switch (payload.settings.ptt) {
+    // Sending Push To ACTION hotkey
+    case 1:
+      TeamSpeakWebsocket.send(
+        JSON.stringify({
+          type: "buttonPress",
+          payload: {
+            button: "ptt",
+            state: false,
+          },
+        })
+      );
+      $SD.setState(context, false);
+      break;
   }
 });
 
