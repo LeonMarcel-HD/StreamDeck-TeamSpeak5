@@ -48,6 +48,7 @@ $SD.on("didReceiveGlobalSettings", ({ event, payload }) => {
   console.log("%c Stream Deck -- Settings received: ", "color: #63c443");
   settings = payload.settings;
   settings.connectionStatus = false;
+  TeamSpeakIsConnected = false;
 
   if (!(settings.port && !isNaN(settings.port))) {
     console.warn("Falling back to default port");
@@ -74,6 +75,17 @@ const reconnectTeamSpeak = async () => {
 
 const createTeamSpeakSocket = () => {
   if (!TeamSpeakIsConnected) {
+    if (
+      TeamSpeakWebsocket &&
+      TeamSpeakWebsocket.readyState !== WebSocket.CLOSED
+    ) {
+      console.log("%c TeamSpeak -- Closing Websocket: ", "color: #db463b");
+      TeamSpeakWebsocket.close();
+      userarray.length = 0;
+      talkingurls.length = 0;
+
+    }
+
     TeamSpeakWebsocket = new WebSocket("ws://127.0.0.1:" + settings.port);
     TeamSpeakWebsocket.onopen = () => {
       TeamSpeakIsConnected = true;
