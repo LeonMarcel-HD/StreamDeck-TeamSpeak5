@@ -1,14 +1,16 @@
 {
   "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
-  "SDKVersion": 2,
+  "Name": "TeamSpeak 5",  
+  "Category": "TeamSpeak 5",
+  "Description": "Control TeamSpeak 5 trough Remote Apps",
+  "UUID": "de.leonmarcel.teamspeak5",
   "Author": "LeonMarcel",
   "CodePath": "app.html",
-  "Description": "Control TeamSpeak 5 trough Remote Apps",
-  "Name": "TeamSpeak 5",
-  "Icon": "assets/icon_plugin",
   "URL": "https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5",
+  "Icon": "assets/icon_marketplace",
+  "CategoryIcon": "assets/icon_category",
   "Version": "1.2.0.0",
-  "UUID": "de.leonmarcel.teamspeak5",
+  "SDKVersion": 2,
   "Software": {
     "MinimumVersion": "6.4"
   },
@@ -22,8 +24,6 @@
       "MinimumVersion": "10"
     }
   ],
-  "Category": "TeamSpeak 5",
-  "CategoryIcon": "assets/icon_category",
   "Actions": [
     {
       "Name": "Mute",
