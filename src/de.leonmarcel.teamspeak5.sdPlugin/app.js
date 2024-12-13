@@ -84,6 +84,11 @@ const createTeamSpeakSocket = () => {
       userarray.length = 0;
       talkingurls.length = 0;
 
+      generateMultiAvatarImage([], 0).then((dataUrl) => {
+        overlayContexts.forEach((context) => {
+          $SD.setImage(context, dataUrl);
+        });
+      });
     }
 
     TeamSpeakWebsocket = new WebSocket("ws://127.0.0.1:" + settings.port);
