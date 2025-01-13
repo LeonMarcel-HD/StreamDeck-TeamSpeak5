@@ -774,7 +774,9 @@ generateMultiAvatarImage = async (urls, n) => {
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
   // offset is 10px
-  ctx.fillText(n, 10, 10);
+  if (!n == 0) {
+    ctx.fillText(n, 10, 10);
+  }
 
   return canvas.toDataURL();
 };
