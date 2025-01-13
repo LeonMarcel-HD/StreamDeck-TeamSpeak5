@@ -2,7 +2,15 @@
 
 image:https://img.shields.io/github/v/release/leonmarcel-hd/StreamDeck-TeamSpeak5?color=blue&label=Latest Version[link="https://github.com/LeonMarcel-HD/StreamDeck-TeamSpeak5/releases/latest"]
 
-image::https://user-images.githubusercontent.com/83507548/242984540-5c6607ab-86c6-4f3c-8f85-b9343ef1ce7e.png[Header Image]
+image::https://discourse-forums-images.s3.dualstack.us-east-2.amazonaws.com/original/3X/7/e/7e3db416d824975b6adae3fc2e44e74deb6b30a9.png[Promotional Header Image]
+
+== Download & Installation
+
++++
+<a href="https://marketplace.elgato.com/product/teamspeak-5-871cb93b-a819-48e5-bb06-1aef5e75687f" rel="noopener noreferrer" target="_blank">
+    <img src="https://docs.elgato.com/img/badges/marketplace-light.svg" alt="Get it on marketplace" title="Get TeamSpeak 5 on Marketplace" style="height: 60px;"/>
+</a>
++++
 
 == Setup
 
@@ -44,13 +52,9 @@ beside the Keybinding.
 
 == Features
 
-image::https://user-images.githubusercontent.com/83507548/243126376-2ca6abe3-8b3d-4082-8fa2-59f624fe8eb6.png[Features]
+image::https://discourse-forums-images.s3.dualstack.us-east-2.amazonaws.com/original/3X/0/0/00a7b1a943fa2687f948afb1c8f2e6e9b0576551.png[Image that show Features of the Plugin]
 
 _All Push to Activate Buttons can be toggled to act as Toggle to Activate_
-
-== Download & Installation
-
-**You should download it from the https://marketplace.elgato.com/product/teamspeak-5-871cb93b-a819-48e5-bb06-1aef5e75687f[Elgato Marketplace] or the https://apps.elgato.com/plugins/de.leonmarcel.teamspeak5[Elgato Store]!**
 
 == Bug Reports
 
