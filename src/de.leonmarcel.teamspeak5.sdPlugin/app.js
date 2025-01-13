@@ -83,6 +83,7 @@ const createTeamSpeakSocket = () => {
       TeamSpeakWebsocket.close();
       userarray.length = 0;
       talkingurls.length = 0;
+      urls = 0;
 
       generateMultiAvatarImage([], 0).then((dataUrl) => {
         overlayContexts.forEach((context) => {
@@ -118,7 +119,7 @@ const createTeamSpeakSocket = () => {
   // Listening on messages coming from the websocket
   TeamSpeakWebsocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    //console.log(data.payload); //TODO REMOVE BEFORE SHIP
+    //console.log(data); //REMOVE BEFORE SHIP
     if (data.status && data.status.code !== 0) {
       console.log("%c TeamSpeak -- Error: ", "color: #db463b");
       if (TeamSpeakIsConnected) {
@@ -198,7 +199,6 @@ const createTeamSpeakSocket = () => {
       urls = talkingurls.map(function (value) {
         return value[2];
       });
-      // TODO: count total number of users in channel to display it in the top left corner
       generateMultiAvatarImage(urls, talkingurls.length).then((dataUrl) => {
         overlayContexts.forEach((context) => {
           $SD.setImage(context, dataUrl);
@@ -214,6 +214,15 @@ const createTeamSpeakSocket = () => {
           data.payload.properties.nickname;
         userarray[String(data.payload.clientId)]["avatar"] =
           data.payload.properties.myteamspeakAvatar;
+      } else if (data.payload.newChannelId == "0") {
+        talkingurls = talkingurls.filter(function (value) {
+          return value[0] !== data.payload.connectionId;
+        });
+        generateMultiAvatarImage([], 0).then((dataUrl) => {
+          overlayContexts.forEach((context) => {
+            $SD.setImage(context, dataUrl);
+          });
+        });
       }
     }
   };
