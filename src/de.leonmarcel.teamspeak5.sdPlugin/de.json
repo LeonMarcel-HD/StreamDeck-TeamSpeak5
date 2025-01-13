@@ -35,7 +35,7 @@
     "Tooltip": "Aktiviere, um zu sprechen"
   },
   "de.leonmarcel.teamspeak5.overlay": {
-    "Name": "Overlay", 
+    "Name": "Overlay [In Entwicklung]", 
     "Tooltip": "Sehe aktuell sprechende Nutzer"
   },
   "Localization": {
