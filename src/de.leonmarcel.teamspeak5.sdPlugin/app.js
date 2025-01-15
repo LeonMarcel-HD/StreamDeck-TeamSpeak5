@@ -215,6 +215,7 @@ const createTeamSpeakSocket = () => {
         userarray[String(data.payload.clientId)]["avatar"] =
           data.payload.properties.myteamspeakAvatar;
       } else if (data.payload.newChannelId == "0") {
+        delete userarray[data.payload.connectionId][data.payload.clientId];
         talkingurls = talkingurls.filter(function (value) {
           return value[0] !== data.payload.connectionId;
         });
@@ -223,6 +224,10 @@ const createTeamSpeakSocket = () => {
             $SD.setImage(context, dataUrl);
           });
         });
+      }
+    } else if (data.type === "connectStatusChanged") {
+      if (data.payload.status == 0) {
+        delete userarray[data.payload.connectionId];
       }
     }
   };
