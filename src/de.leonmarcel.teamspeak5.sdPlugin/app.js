@@ -29,7 +29,7 @@ let tttActive = false;
 let settings;
 
 // Overlay lists
-let userarray = []; // Array to store all users in the current channel
+let userarray = []; // Array to store connectionID and clientID with their nickname and avatar
 let talkingurls = []; // Links of myts avatars that are talking
 
 // The first event when Stream Deck starts
@@ -142,12 +142,12 @@ const createTeamSpeakSocket = () => {
         console.log(data.payload.connections);
         if (data.payload.connections.length != 0) {
           data.payload.connections.forEach((connection) => {
+            userarray[connection.id] = [];
             connection.clientInfos.forEach((element) => {
-              userarray[String(element.id)] = [];
-              userarray[String(element.id)]["user"] =
-                element.properties.nickname;
-              userarray[String(element.id)]["avatar"] =
-                element.properties.myteamspeakAvatar;
+              userarray[connection.id][element.id] = {
+                user: element.properties.nickname,
+                avatar: element.properties.myteamspeakAvatar,
+              };
             });
           });
         }
@@ -174,15 +174,15 @@ const createTeamSpeakSocket = () => {
         });
       }
     } else if (data.type === "talkStatusChanged") {
-      url = userarray[String(data.payload.clientId)]["avatar"]
-        .split(";")
-        .sort(
-          (a, b) =>
-            ["2", "3", "4", "1"].indexOf(a[0]) -
-            ["2", "3", "4", "1"].indexOf(b[0])
-        )[0]
-        .split(",")[1];
       if (data.payload.status === 1) {
+        url = userarray[data.payload.connectionId][data.payload.clientId].avatar
+          .split(";")
+          .sort(
+            (a, b) =>
+              ["2", "3", "4", "1"].indexOf(a[0]) -
+              ["2", "3", "4", "1"].indexOf(b[0])
+          )[0]
+          .split(",")[1];
         talkingurls.push([
           data.payload.connectionId,
           data.payload.clientId,
@@ -209,11 +209,13 @@ const createTeamSpeakSocket = () => {
         data.payload.oldChannelId == "0" &&
         data.payload.properties !== null
       ) {
-        userarray[String(data.payload.clientId)] = [];
-        userarray[String(data.payload.clientId)]["user"] =
-          data.payload.properties.nickname;
-        userarray[String(data.payload.clientId)]["avatar"] =
-          data.payload.properties.myteamspeakAvatar;
+        if (!userarray[data.payload.connectionId]) {
+          userarray[data.payload.connectionId] = [];
+        }
+        userarray[data.payload.connectionId][data.payload.clientId] = {
+          user: data.payload.properties.nickname,
+          avatar: data.payload.properties.myteamspeakAvatar,
+        };
       } else if (data.payload.newChannelId == "0") {
         delete userarray[data.payload.connectionId][data.payload.clientId];
         talkingurls = talkingurls.filter(function (value) {
