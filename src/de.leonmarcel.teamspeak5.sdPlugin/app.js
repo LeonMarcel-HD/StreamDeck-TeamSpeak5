@@ -36,6 +36,14 @@ let currentlyTalkingUsers = []; // Links of myts avatars that are talking
 // Getting global settings and sending to to PI for them to use
 $SD.onConnected(
   ({ actionInfo, appInfo, connection, messageType, port, uuid }) => {
+
+    bkgrd_image = new Image();
+    bkgrd_image.src = "assets/overlay/overlay_blank.png";
+    pp_bkgrd_image = new Image();
+    pp_bkgrd_image.src = "assets/overlay/default_gradient.png";
+    pp_whisper_image = new Image();
+    pp_whisper_image.src = "assets/overlay/whisper.png";
+
     $SD.getGlobalSettings(uuid);
     $SD.sendToPropertyInspector(uuid);
 
@@ -764,8 +772,6 @@ generateMultiAvatarImage = async (urls, n, whoIsWhispering) => {
   canvas.width = canvas_size;
 
   // draw background from assets/overlay/overlay_blank.png
-  bkgrd_image = new Image();
-  bkgrd_image.src = "assets/overlay/overlay_blank.png";
   await bkgrd_image.onload;
   ctx.drawImage(bkgrd_image, 0, 0, canvas_size, canvas_size);
 
@@ -780,10 +786,6 @@ generateMultiAvatarImage = async (urls, n, whoIsWhispering) => {
     ctx.clip();
 
     // draw gradient
-    pp_bkgrd_image = new Image();
-    pp_bkgrd_image.src = "assets/overlay/default_gradient.png";
-    pp_whisper_image = new Image();
-    pp_whisper_image.src = "assets/overlay/whisper.png";
     await pp_bkgrd_image.onload;
     x = images[i].x - circle_radius;
     y = images[i].y - circle_radius;
