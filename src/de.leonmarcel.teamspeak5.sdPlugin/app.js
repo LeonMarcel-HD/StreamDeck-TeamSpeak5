@@ -175,8 +175,9 @@ const createTeamSpeakSocket = () => {
       }
     } else if (data.type === "talkStatusChanged") {
       if (data.payload.status === 1) {
-        url = userarray[data.payload.connectionId][data.payload.clientId].avatar
-        urlFromUserList = allUsersList[data.payload.connectionId][data.payload.clientId].avatar
+        urlFromUserList = allUsersList[data.payload.connectionId][
+          data.payload.clientId
+        ].avatar
           .split(";")
           .sort(
             (a, b) =>
@@ -187,20 +188,29 @@ const createTeamSpeakSocket = () => {
         currentlyTalkingUsers.push([
           data.payload.connectionId,
           data.payload.clientId,
+          data.payload.isWhisper,
           urlFromUserList,
         ]);
       } else {
         currentlyTalkingUsers = currentlyTalkingUsers.filter(function (value) {
           return !(
             value[0] === data.payload.connectionId &&
-            value[1] === data.payload.clientId
+            value[1] === data.payload.clientId &&
+            value[2] === data.payload.isWhisper
           );
         });
       }
       urls = currentlyTalkingUsers.map(function (value) {
+        return value[3];
+      });
+      whoIsWhispering = currentlyTalkingUsers.map(function (value) {
         return value[2];
       });
-      generateMultiAvatarImage(urls, currentlyTalkingUsers.length).then((dataUrl) => {
+      generateMultiAvatarImage(
+        urls,
+        currentlyTalkingUsers.length,
+        whoIsWhispering
+      ).then((dataUrl) => {
         overlayContexts.forEach((context) => {
           $SD.setImage(context, dataUrl);
         });
@@ -691,7 +701,7 @@ ptt.onKeyUp(({ action, context, device, event, payload }) => {
 // |         GENERATING IMAGES FOR OVERLAY            |
 // ----------------------------------------------------
 
-generateMultiAvatarImage = async (urls, n) => {
+generateMultiAvatarImage = async (urls, n, whoIsWhispering) => {
   // one images takes up a little over 1/3 of the width (let's say 50px for now)
   // all images are cut into circles
   // images overlap by 1/3 of their radius
@@ -772,6 +782,8 @@ generateMultiAvatarImage = async (urls, n) => {
     // draw gradient
     pp_bkgrd_image = new Image();
     pp_bkgrd_image.src = "assets/overlay/default_gradient.png";
+    pp_whisper_image = new Image();
+    pp_whisper_image.src = "assets/overlay/whisper.png";
     await pp_bkgrd_image.onload;
     x = images[i].x - circle_radius;
     y = images[i].y - circle_radius;
@@ -783,6 +795,17 @@ generateMultiAvatarImage = async (urls, n) => {
 
     // reset clip
     ctx.restore();
+
+    // draw whisper icon
+    if (whoIsWhispering[i]) {
+      ctx.drawImage(
+        pp_whisper_image,
+        x - circle_radius / 2,
+        y * 0.95,
+        circle_radius * 3,
+        h * 1.1
+      );
+    }
   }
 
   // draw number in top left corner with an offset of 10px
