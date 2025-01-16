@@ -29,8 +29,8 @@ let tttActive = false;
 let settings;
 
 // Overlay lists
-let userarray = []; // Array to store connectionID and clientID with their nickname and avatar
-let talkingurls = []; // Links of myts avatars that are talking
+let allUsersList = []; // Array to store connectionID and clientID with their nickname and avatar
+let currentlyTalkingUsers = []; // Links of myts avatars that are talking
 
 // The first event when Stream Deck starts
 // Getting global settings and sending to to PI for them to use
@@ -81,8 +81,8 @@ const createTeamSpeakSocket = () => {
     ) {
       console.log("%c TeamSpeak -- Closing Websocket: ", "color: #db463b");
       TeamSpeakWebsocket.close();
-      userarray.length = 0;
-      talkingurls.length = 0;
+      allUsersList.length = 0;
+      currentlyTalkingUsers.length = 0;
       urls = 0;
 
       generateMultiAvatarImage([], 0).then((dataUrl) => {
@@ -142,9 +142,9 @@ const createTeamSpeakSocket = () => {
         console.log(data.payload.connections);
         if (data.payload.connections.length != 0) {
           data.payload.connections.forEach((connection) => {
-            userarray[connection.id] = [];
+            allUsersList[connection.id] = [];
             connection.clientInfos.forEach((element) => {
-              userarray[connection.id][element.id] = {
+              allUsersList[connection.id][element.id] = {
                 user: element.properties.nickname,
                 avatar: element.properties.myteamspeakAvatar,
               };
@@ -176,6 +176,7 @@ const createTeamSpeakSocket = () => {
     } else if (data.type === "talkStatusChanged") {
       if (data.payload.status === 1) {
         url = userarray[data.payload.connectionId][data.payload.clientId].avatar
+        urlFromUserList = allUsersList[data.payload.connectionId][data.payload.clientId].avatar
           .split(";")
           .sort(
             (a, b) =>
@@ -183,23 +184,23 @@ const createTeamSpeakSocket = () => {
               ["2", "3", "4", "1"].indexOf(b[0])
           )[0]
           .split(",")[1];
-        talkingurls.push([
+        currentlyTalkingUsers.push([
           data.payload.connectionId,
           data.payload.clientId,
-          url,
+          urlFromUserList,
         ]);
       } else {
-        talkingurls = talkingurls.filter(function (value) {
+        currentlyTalkingUsers = currentlyTalkingUsers.filter(function (value) {
           return !(
             value[0] === data.payload.connectionId &&
             value[1] === data.payload.clientId
           );
         });
       }
-      urls = talkingurls.map(function (value) {
+      urls = currentlyTalkingUsers.map(function (value) {
         return value[2];
       });
-      generateMultiAvatarImage(urls, talkingurls.length).then((dataUrl) => {
+      generateMultiAvatarImage(urls, currentlyTalkingUsers.length).then((dataUrl) => {
         overlayContexts.forEach((context) => {
           $SD.setImage(context, dataUrl);
         });
@@ -209,16 +210,16 @@ const createTeamSpeakSocket = () => {
         data.payload.oldChannelId == "0" &&
         data.payload.properties !== null
       ) {
-        if (!userarray[data.payload.connectionId]) {
-          userarray[data.payload.connectionId] = [];
+        if (!allUsersList[data.payload.connectionId]) {
+          allUsersList[data.payload.connectionId] = [];
         }
-        userarray[data.payload.connectionId][data.payload.clientId] = {
+        allUsersList[data.payload.connectionId][data.payload.clientId] = {
           user: data.payload.properties.nickname,
           avatar: data.payload.properties.myteamspeakAvatar,
         };
       } else if (data.payload.newChannelId == "0") {
-        delete userarray[data.payload.connectionId][data.payload.clientId];
-        talkingurls = talkingurls.filter(function (value) {
+        delete allUsersList[data.payload.connectionId][data.payload.clientId];
+        currentlyTalkingUsers = currentlyTalkingUsers.filter(function (value) {
           return value[0] !== data.payload.connectionId;
         });
         generateMultiAvatarImage([], 0).then((dataUrl) => {
@@ -229,7 +230,7 @@ const createTeamSpeakSocket = () => {
       }
     } else if (data.type === "connectStatusChanged") {
       if (data.payload.status == 0) {
-        delete userarray[data.payload.connectionId];
+        delete allUsersList[data.payload.connectionId];
       }
     }
   };
