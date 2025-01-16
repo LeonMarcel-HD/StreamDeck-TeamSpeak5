@@ -38,7 +38,7 @@ $SD.onConnected(
   ({ actionInfo, appInfo, connection, messageType, port, uuid }) => {
 
     bkgrd_image = new Image();
-    bkgrd_image.src = "assets/overlay/overlay_blank.png";
+    bkgrd_image.src = "assets/overlay/overlay_blank.svg";
     pp_bkgrd_image = new Image();
     pp_bkgrd_image.src = "assets/overlay/default_gradient.png";
     pp_whisper_image = new Image();
