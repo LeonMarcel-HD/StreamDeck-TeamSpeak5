@@ -35,8 +35,12 @@
     "Tooltip": "Aktiviere, um zu sprechen"
   },
   "de.leonmarcel.teamspeak5.overlay": {
-    "Name": "Overlay [In Entwicklung]", 
+    "Name": "Overlay", 
     "Tooltip": "Sehe aktuell sprechende Nutzer"
+  },
+  "de.leonmarcel.teamspeak5.startstream": {
+    "Name": "Start Stream", 
+    "Tooltip": "Starte dein Stream"
   },
   "Localization": {
     "operationmode": "Betriebsmodus",
@@ -45,7 +49,11 @@
     "toggletoactivate": "Umschalten zum Aktivieren",
 
     "whisperlist": "Whisperliste",
-    "whisperlist.name": "Whisperlist Namen eingeben",
+    "whisperlist.name": "Name für die Whisperlist",
+
+    "streampreset": "Stream Voreinstellung",
+    "streampreset.name": "Name für die Voreinstellung",
+    "streampreset.information": "Der Presetname ist aktuell nicht wichtig, da es aktuell nur eine Voreinstellung in TeamSpeak gibt.",
 
     "noconnnection.noremoteapps": "Es konnte keine Verbindung zur TeamSpeak Remote App hergestellt werden",
     "noconnnection.setup": "Einrichtung",
@@ -58,6 +66,7 @@
     "overlay.allserver": "Alle aktiven Sprecher",
     "overlay.talkingserver": "Server auf dem du sprichst",
     "overlay.visibleserver": "Server den du in TeamSpeak siehst",
+    "overlay.information": "Das Overlay zeigt aktuell alle Sprecher an. Der Betriebsmodus wird nicht berücksichtigt.",
 
     "help.openguide": "Etwas funktioniert nicht?"
   }

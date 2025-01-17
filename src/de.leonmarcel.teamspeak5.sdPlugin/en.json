@@ -38,6 +38,10 @@
     "Name": "Overlay [Work In Progress]", 
     "Tooltip": "See currently Talking Users"
   },
+  "de.leonmarcel.teamspeak5.startstream": {
+    "Name": "Start Stream", 
+    "Tooltip": "Start your Stream"
+  },
   "Localization": {
     "operationmode": "Operation Mode",
 
@@ -45,7 +49,11 @@
     "toggletoactivate": "Toggle to Activate",
 
     "whisperlist": "Whisperlist",
-    "whisperlist.name": "Enter Whisperlist Name",
+    "whisperlist.name": "Name for your Whisperlist",
+
+    "streampreset": "Stream Preset",
+    "streampreset.name": "Name for your Preset",
+    "streampreset.information": "The preset name is currently not important, as there is currently only one preset in TeamSpeak.",
 
     "noconnnection.noremoteapps": "Could not connect to TeamSpeak Remote App",
     "noconnnection.setup": "Setup",
@@ -58,6 +66,7 @@
     "overlay.allserver": "All Active Talker",
     "overlay.talkingserver": "Server you are Talking on",
     "overlay.visibleserver": "Server you see in TeamSpeak",
+    "overlay.information": "The overlay currently shows all speakers. The operation mode is not considered.",
 
     "help.openguide": "Something isn't working?"
   }
