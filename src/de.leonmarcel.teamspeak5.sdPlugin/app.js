@@ -19,6 +19,7 @@ const overlaybtn = new Action("de.leonmarcel.teamspeak5.overlay");
 const lWhisper = new Action("de.leonmarcel.teamspeak5.lwhisperaction");
 const qWhisper = new Action("de.leonmarcel.teamspeak5.qwhisperaction");
 const rWhisper = new Action("de.leonmarcel.teamspeak5.rwhisperaction");
+const startStream = new Action("de.leonmarcel.teamspeak5.startstream");
 const ptm = new Action("de.leonmarcel.teamspeak5.ptmaction");
 const ptt = new Action("de.leonmarcel.teamspeak5.pttaction");
 let ttlwActive = false;
@@ -36,13 +37,10 @@ let currentlyTalkingUsers = []; // Links of myts avatars that are talking
 // Getting global settings and sending to to PI for them to use
 $SD.onConnected(
   ({ actionInfo, appInfo, connection, messageType, port, uuid }) => {
-
     bkgrd_image = new Image();
     bkgrd_image.src = "assets/overlay/overlay_blank.svg";
-    pp_bkgrd_image = new Image();
-    pp_bkgrd_image.src = "assets/overlay/default_gradient.png";
     pp_whisper_image = new Image();
-    pp_whisper_image.src = "assets/overlay/whisper.png";
+    pp_whisper_image.src = "assets/overlay/whisper.svg";
 
     $SD.getGlobalSettings(uuid);
     $SD.sendToPropertyInspector(uuid);
@@ -705,6 +703,42 @@ ptt.onKeyUp(({ action, context, device, event, payload }) => {
   }
 });
 
+// ----------------------------------------------------|
+// |                SENDING START STREAM               |
+// ----------------------------------------------------|
+
+startStream.onKeyDown(({ action, context, device, event, payload }) => {
+  if (!TeamSpeakIsConnected) {
+    $SD.showAlert(context);
+    return;
+  }
+  TeamSpeakWebsocket.send(
+    JSON.stringify({
+      type: "buttonPress",
+      payload: {
+        button: payload.settings.input + ".streamPreset",
+        state: true,
+      },
+    })
+  );
+});
+
+startStream.onKeyUp(({ action, context, device, event, payload }) => {
+  if (!TeamSpeakIsConnected) {
+    $SD.showAlert(context);
+    return;
+  }
+  TeamSpeakWebsocket.send(
+    JSON.stringify({
+      type: "buttonPress",
+      payload: {
+        button: payload.settings.input + ".streamPreset",
+        state: false,
+      },
+    })
+  );
+});
+
 // ----------------------------------------------------
 // |         GENERATING IMAGES FOR OVERLAY            |
 // ----------------------------------------------------
@@ -753,7 +787,7 @@ generateMultiAvatarImage = async (urls, n, whoIsWhispering) => {
         break;
     }
 
-    url = urls[i] || "assets/overlay/default_profilepicture.png";
+    url = urls[i] || "assets/overlay/default_profilepicture.svg";
     image = new Image();
     image.src = url;
     await image.onload;
@@ -786,12 +820,10 @@ generateMultiAvatarImage = async (urls, n, whoIsWhispering) => {
     ctx.clip();
 
     // draw gradient
-    await pp_bkgrd_image.onload;
     x = images[i].x - circle_radius;
     y = images[i].y - circle_radius;
     w = circle_radius * 2;
     h = circle_radius * 2;
-    ctx.drawImage(pp_bkgrd_image, x, y, w, h);
     // draw image if it is not undefined
     ctx.drawImage(images[i].img, x, y, w, h);
 

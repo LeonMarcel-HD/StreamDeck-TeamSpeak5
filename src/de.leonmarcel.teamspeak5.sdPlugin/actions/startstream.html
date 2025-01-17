@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>TeamSpeak 5 -- Overlay Property Inspector</title>
+    <title>TeamSpeak 5 -- StartStream Property Inspector</title>
     <link rel="stylesheet" href="../libs/css/sdpi.css" />
     <style>
       #port:invalid {
@@ -36,28 +36,15 @@
       </div>
       <!-- Layout 2 to show settings when connected to TS -->
       <div id="sdpi-layout2">
-        <div type="radio" class="sdpi-item" id="adjust_radio">
-          <div class="sdpi-item-label" data-localize>operationmode</div>
-          <div class="sdpi-item-value">
-            <div class="sdpi-item-child">
-              <input id="rdio1" type="radio" name="rdio" />
-              <label for="rdio1" class="sdpi-item-label" data-localize>
-                <span></span>overlay.allserver
-              </label>
-            </div>
-            <div class="sdpi-item-child">
-              <input id="rdio2" type="radio" name="rdio" />
-              <label for="rdio2" class="sdpi-item-label" data-localize>
-                <span></span>overlay.talkingserver
-              </label>
-            </div>
-            <!-- <div class="sdpi-item-child">
-              <input id="rdio3" type="radio" name="rdio" />
-              <label for="rdio3" class="sdpi-item-label" data-localize>
-                <span></span>overlay.visibleserver
-              </label>
-            </div> -->
-          </div>
+        <div class="sdpi-item">
+          <div class="sdpi-item-label" data-localize>streampreset</div>
+          <input
+            class="sdpi-item-value"
+            data-localize
+            placeholder="streampreset.name"
+            type="text"
+            id="streampreset"
+          />
         </div>
         <div
           class="sdpi-item"
@@ -68,7 +55,7 @@
             max-width: none;
           "
         >
-          <strong data-localize>overlay.information</strong>
+          <strong data-localize>streampreset.information</strong>
           <h3><strong data-localize>connection.teamspeak</strong></h3>
         </div>
         <br />
@@ -98,6 +85,6 @@
     <script src="../libs/js/api.js"></script>
     <script src="../libs/js/property-inspector.js"></script>
     <script src="../libs/js/dynamic-styles.js"></script>
-    <script src="overlay_pi.js"></script>
+    <script src="startstream_pi.js"></script>
   </body>
 </html>
