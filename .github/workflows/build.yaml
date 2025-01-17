@@ -10,6 +10,10 @@ jobs:
     permissions:
       contents: write
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: src/de.leonmarcel.teamspeak5
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -18,20 +22,20 @@ jobs:
 
       - name: RenameSource
         run: |
-          Rename-Item -Path "src" -NewName "de.leonmarcel.teamspeak5.sdPlugin"
-          New-Item -ItemType Directory -Path "release"
+          Rename-Item -Path "." -NewName "de.leonmarcel.teamspeak5.sdPlugin"
+          New-Item -ItemType Directory -Path "../release"
 
       - name: StreamDeck Distribution Tool
         uses: AdamCarballo/streamdeck-distribution-tool@v1.0.1
         with:
           input: de.leonmarcel.teamspeak5.sdPlugin
-          output: release
-          working-directory: plugin
+          output: ../release
+          working-directory: .
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ./release/de.leonmarcel.teamspeak5.streamDeckPlugin
+            ../release/de.leonmarcel.teamspeak5.streamDeckPlugin
           draft: true
           prerelease: false
