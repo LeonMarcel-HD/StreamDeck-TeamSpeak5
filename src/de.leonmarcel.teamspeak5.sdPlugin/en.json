@@ -1,7 +1,7 @@
 {
-  "Description": "Control TeamSpeak 5 trough Remote Apps", 
-  "Name": "TeamSpeak 5", 
-  "Category": "TeamSpeak 5", 
+  "Description": "Control TeamSpeak 6 trough Remote Apps", 
+  "Name": "TeamSpeak 6", 
+  "Category": "TeamSpeak 6", 
   "de.leonmarcel.teamspeak5.muteaction": {
     "Name": "Microphone Mute", 
     "Tooltip": "Toggle your Microphone Mute"

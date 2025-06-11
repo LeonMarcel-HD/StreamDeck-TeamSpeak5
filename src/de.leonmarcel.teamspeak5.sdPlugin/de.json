@@ -1,7 +1,7 @@
 {
-  "Description": "Steuere TeamSpeak 5 durch Remote Apps",
-  "Name": "TeamSpeak 5",
-  "Category": "TeamSpeak 5",
+  "Description": "Steuere TeamSpeak 6 durch Remote Apps",
+  "Name": "TeamSpeak 6",
+  "Category": "TeamSpeak 6",
   "de.leonmarcel.teamspeak5.muteaction": {
     "Name": "Mikrofon stummschalten",
     "Tooltip": "Wechseln der Mikrofon-Stummschaltung"
